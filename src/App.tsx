@@ -260,8 +260,8 @@ export default function App() {
 					</button>
 				</form>
 
-				<div className='absolute top-0 left-80'>
-					<CircleHelp/>
+				<div className='absolute top-0 left-80 cursor-pointer'>
+					<CircleHelp onClick={() => setHelp(true)}/>
 				</div>
 			</div>
 
@@ -397,29 +397,31 @@ export default function App() {
 	 		  </Dialog.Root>
 
 
-			   <Dialog.Root open={true}>
+			   <Dialog.Root open={help}>
 	 			<Dialog.Portal>
 	 			  <Dialog.Overlay className="DialogOverlay " />
 	 			  <Dialog.Content className="DialogContent bg-zinc-700 text-white">
 	 				<Dialog.Title className="DialogTitle text-white">Como usar o app</Dialog.Title>
 
 					<Dialog.Description>
-					<ol type="1" className='list-decimal'>
-						<li>Acesse o site <a href="https://ygoprodeck.com/" className='underline text-violet-500'>ygoprodeck</a> e vá até sua coleção</li>
-						<li>Clique em <strong>Tools</strong> e baixe como <strong>.csv</strong></li>
-						<li>Ao baixar o arquivo selecione ele nesse site</li>
-						<li>Ao importar o arquivo você verá uma lista com todas suas cartas</li>
-						<li>Clique com o botão direito para adicioná-las ao Main Deck</li>
-						<li>Clique com o botão esquerdo para ver os stats da carta</li>
-						<li>Você pode filtrar pelo nome da carta</li>
-						<li>Ao terminar de montar o Deck, selecione <strong>Baixar Deck</strong> e escolha o local de salvamento</li>
-						<li>Abra o jogo e selecione <strong>Deck Manager</strong></li>
-						<li>Clique em <strong>Import</strong> e em seguida <strong>Browse</strong></li>
-						<li>Importe o arquivo baixado</li>
-					</ol>  
+					<div className='flex flex-col gap-4 mt-4'>
+						<ol type="1" className='list-decimal ml-6'>
+							<li>Acesse o site <a href="https://ygoprodeck.com/" className='underline text-violet-500'>ygoprodeck</a> e vá até sua coleção</li>
+							<li>Clique em <strong>Tools</strong> e baixe como <strong>.csv</strong></li>
+							<li>Ao baixar o arquivo selecione ele nesse site</li>
+							<li>Ao importar o arquivo você verá uma lista com todas suas cartas</li>
+							<li>Clique com o botão direito para adicioná-las ao Main Deck</li>
+							<li>Clique com o botão esquerdo para ver os stats da carta</li>
+							<li>Você pode filtrar pelo nome da carta</li>
+							<li>Ao terminar de montar o Deck, selecione <strong>Baixar Deck</strong> e escolha o local de salvamento</li>
+							<li>Abra o jogo e selecione <strong>Deck Manager</strong></li>
+							<li>Clique em <strong>Import</strong> e em seguida <strong>Browse</strong></li>
+							<li>Importe o arquivo baixado</li>
+						</ol>  
 
-					<span>Obs. 1: As cartas do Extra deck são adicionadas automáticamente</span>
-					<span>Obs. 2: Não criei um Side Deck, mas ele pode ser adionado no jogo</span>
+						<span>Obs. 1: As cartas do Extra deck são adicionadas automáticamente</span>
+						<span>Obs. 2: Não criei um Side Deck, mas ele pode ser adionado no jogo</span>
+					</div>
 					</Dialog.Description>
 
 					<div className='w-full h-fit min-h-8 flex justify-end gap-4'>
