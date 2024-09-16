@@ -406,7 +406,7 @@ export default function App() {
 					<Dialog.Description>
 					<div className='flex flex-col gap-4 mt-4'>
 						<ol type="1" className='list-decimal ml-6'>
-							<li>Acesse o site <a href="https://ygoprodeck.com/" className='underline text-violet-500'>ygoprodeck</a> e vá até sua coleção</li>
+							<li>Acesse o site <a href="https://ygoprodeck.com/" className='underline text-violet-500' target='_blank'>ygoprodeck</a> e vá até sua coleção</li>
 							<li>Clique em <strong>Tools</strong> e baixe como <strong>.csv</strong></li>
 							<li>Ao baixar o arquivo selecione ele nesse site</li>
 							<li>Ao importar o arquivo você verá uma lista com todas suas cartas</li>
