@@ -5,7 +5,7 @@ import axios from 'axios'
 import Papa from 'papaparse';
 import * as Dialog from '@radix-ui/react-dialog';
 import './modal.css'
-import { Book, Search, Shield, Swords, X } from 'lucide-react';
+import { Book, CircleHelp, Search, Shield, Swords, X } from 'lucide-react';
 import { saveAs } from 'file-saver';
 
 interface card {
@@ -72,6 +72,7 @@ export default function App() {
 	const [currentCards, setCurrentCards] = useState<card[]>(cards)
 	const [search, setSearch] = useState('')
 	const [clearDeckModal, setClearDeck] = useState(false)
+	const [help, setHelp] = useState(false)
 	const readCsv = async (event:any) =>{
 		Papa.parse(event.target.files[0], {
 			header: true,
@@ -241,7 +242,7 @@ export default function App() {
 
 	return (
 		<div className='flex flex-col h-screen w-screen items-center px-4 py-4 overflow-hidden '>
-			<div className='flex gap-4 items-center justify-between w-full px-4'>
+			<div className='flex gap-4 items-center justify-between w-full px-4 relative'>
 				<div className='flex gap-4'>
 					<button onClick={downloadDeck} className={`p-2 bg-violet-500 ${mainDeckCards.length > 0 ? '' : 'opacity-0 pointer-events-none'}`}>Baixar deck</button>
 					<button onClick={() => setClearDeck(true)} className={`p-2 bg-red-500 ${mainDeckCards.length > 0 ? '' : 'opacity-0 pointer-events-none'}`}>Limpar deck</button>
@@ -259,6 +260,9 @@ export default function App() {
 					</button>
 				</form>
 
+				<div className='absolute top-0 left-80'>
+					<CircleHelp/>
+				</div>
 			</div>
 
 			<div className='flex h-full w-full py-4 gap-4'>
@@ -385,6 +389,48 @@ export default function App() {
 
 	 				<Dialog.Close asChild>
 	 				  <button className="IconButton" aria-label="Close" onClick={() => {setClearDeck(false)}}>
+	 					<X/>
+	 				  </button>
+	 				</Dialog.Close>
+	 			  </Dialog.Content>
+	 			</Dialog.Portal>
+	 		  </Dialog.Root>
+
+
+			   <Dialog.Root open={true}>
+	 			<Dialog.Portal>
+	 			  <Dialog.Overlay className="DialogOverlay " />
+	 			  <Dialog.Content className="DialogContent bg-zinc-700 text-white">
+	 				<Dialog.Title className="DialogTitle text-white">Como usar o app</Dialog.Title>
+
+					<Dialog.Description>
+					<ol type="1" className='list-decimal'>
+						<li>Acesse o site <a href="https://ygoprodeck.com/" className='underline text-violet-500'>ygoprodeck</a> e vá até sua coleção</li>
+						<li>Clique em <strong>Tools</strong> e baixe como <strong>.csv</strong></li>
+						<li>Ao baixar o arquivo selecione ele nesse site</li>
+						<li>Ao importar o arquivo você verá uma lista com todas suas cartas</li>
+						<li>Clique com o botão direito para adicioná-las ao Main Deck</li>
+						<li>Clique com o botão esquerdo para ver os stats da carta</li>
+						<li>Você pode filtrar pelo nome da carta</li>
+						<li>Ao terminar de montar o Deck, selecione <strong>Baixar Deck</strong> e escolha o local de salvamento</li>
+						<li>Abra o jogo e selecione <strong>Deck Manager</strong></li>
+						<li>Clique em <strong>Import</strong> e em seguida <strong>Browse</strong></li>
+						<li>Importe o arquivo baixado</li>
+					</ol>  
+
+					<span>Obs. 1: As cartas do Extra deck são adicionadas automáticamente</span>
+					<span>Obs. 2: Não criei um Side Deck, mas ele pode ser adionado no jogo</span>
+					</Dialog.Description>
+
+					<div className='w-full h-fit min-h-8 flex justify-end gap-4'>
+
+						<button aria-label="Close" onClick={() => {setHelp(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
+							Entendi
+						</button>
+					</div>
+
+	 				<Dialog.Close asChild>
+	 				  <button className="IconButton" aria-label="Close" onClick={() => {setHelp(false)}}>
 	 					<X/>
 	 				  </button>
 	 				</Dialog.Close>
