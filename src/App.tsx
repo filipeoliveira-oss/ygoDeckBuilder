@@ -99,7 +99,10 @@ export default function App() {
 		return(
 			<div className={`flex bg-blue-500 h-${showMainDeck && mainDeckCards.length > 0  ? 'full': 'fit'} flex-col gap-2`} >
 				<div className='flex w-full h-fit items-center justify-between px-4 cursor-pointer' onClick={()=>{setShowMainDeck(!showMainDeck)}}>
-					<h1 className='font-medium text-sm tracking-tight leading-normal '>Main Deck</h1>
+					<div className='flex gap-4 items-center'>
+						<h1 className='font-medium text-sm tracking-tight leading-normal '>Main Deck</h1>
+						<span>{mainDeckCards.length}/40</span>
+					</div>
 					<span className={showMainDeck ? 'rotate-90' : 'rotate-0'} >&gt;</span>
 				</div>
 				<div className={`h-full bg-zinc-950 w-full  grid grid-cols-cards overflow-auto ${showMainDeck ? '':'hidden'}`}>
@@ -119,7 +122,10 @@ export default function App() {
 		return(
 			<div className={`flex bg-blue-500 h-${showExtraDeck && extraDeckCards.length > 0 ? 'full': 'fit'} flex-col gap-2`}>
 				<div className='flex w-full h-fit items-center justify-between px-4 cursor-pointer' onClick={()=>{setShowExtraDeck(!showExtraDeck)}}>
-					<h1 className='font-medium text-sm tracking-tight leading-normal '>Extra Deck</h1>
+					<div className='flex gap-4 items-center'>
+						<h1 className='font-medium text-sm tracking-tight leading-normal '>Extra Deck</h1>
+						<span>{extraDeckCards.length}/20</span>
+					</div>
 					<span className={showExtraDeck ? 'rotate-90' : 'rotate-0'} >&gt;</span>
 				</div>
 				<div className={`h-full w-full bg-zinc-950 grid grid-cols-cards overflow-auto ${showExtraDeck ? '':'hidden'}`}>
@@ -285,160 +291,161 @@ export default function App() {
 			</div>
 			
 			<Dialog.Root open={isOpen}>
-	 			<Dialog.Portal>
-	 			  <Dialog.Overlay className="DialogOverlay " />
-	 			  <Dialog.Content className="DialogContent bg-zinc-700 text-white">
-	 				<Dialog.Title className="DialogTitle text-white">{cardToInspect?.name}</Dialog.Title>
+			<Dialog.Portal>
+				<Dialog.Overlay className="DialogOverlay " />
+				<Dialog.Content className="DialogContent bg-zinc-700 text-white">
+				<Dialog.Title className="DialogTitle text-white">{cardToInspect?.name}</Dialog.Title>
 
-	 				<div className='flex w-full h-full gap-4'>
-	 					<div className='w-[30%] h-full'>
-	 						<img src={cardToInspect?.card_images[0]?.image_url}/>
-	 					</div>
+				<div className='flex w-full h-full gap-4'>
+					<div className='w-[30%] h-full'>
+						<img src={cardToInspect?.card_images[0]?.image_url}/>
+					</div>
+					
+					<div className='h-full w-full  gap-4 flex flex-col text-white bg'>
+						<div className='flex flex-1  h-fit gap-4'>
+							<div className='w-full h-full flex flex-col bg-zinc-800 p-2 gap-2'>
+								<span className='font-medium text-sm tracking-tight leading-normal '>Type</span>
+								<div className='flex gap-2'>
+									<Book/>
+									<span>{cardToInspect?.type}</span>
+								</div>
+							</div>
+
+							<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
+								<span className='font-medium text-sm tracking-tight leading-normal '>Attribute</span>
+								<div className='flex gap-2'>
+									<img src={`https://images.ygoprodeck.com/images/cards/${cardToInspect?.attribute}.jpg`} alt={cardToInspect?.attribute}  className='w-6 h-6'/>
+									<span>{cardToInspect?.attribute}</span>
+								</div>
+							</div>
+
+							<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
+								<span className='font-medium text-sm tracking-tight leading-normal '>typing</span>
+								<div className='flex gap-2'>
+									<img src={`https://images.ygoprodeck.com/images/cards/icons/race/${cardToInspect?.race}.png`} alt={cardToInspect?.race}  className='w-6 h-6'/>
+									<span>{cardToInspect?.race}</span>
+								</div>
+							</div>
+						</div>
 						
-	 					<div className='h-full w-full  gap-4 flex flex-col text-white bg'>
-							<div className='flex flex-1  h-fit gap-4'>
-								<div className='w-full h-full flex flex-col bg-zinc-800 p-2 gap-2'>
-									<span className='font-medium text-sm tracking-tight leading-normal '>Type</span>
-									<div className='flex gap-2'>
-										<Book/>
-										<span>{cardToInspect?.type}</span>
-									</div>
-								</div>
-
-								<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
-									<span className='font-medium text-sm tracking-tight leading-normal '>Attribute</span>
-									<div className='flex gap-2'>
-										<img src={`https://images.ygoprodeck.com/images/cards/${cardToInspect?.attribute}.jpg`} alt={cardToInspect?.attribute}  className='w-6 h-6'/>
-										<span>{cardToInspect?.attribute}</span>
-									</div>
-								</div>
-
-								<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
-									<span className='font-medium text-sm tracking-tight leading-normal '>typing</span>
-									<div className='flex gap-2'>
-										<img src={`https://images.ygoprodeck.com/images/cards/icons/race/${cardToInspect?.race}.png`} alt={cardToInspect?.race}  className='w-6 h-6'/>
-										<span>{cardToInspect?.race}</span>
-									</div>
-								</div>
-							</div>
-							
-							<div className='flex flex-1  h-fit gap-4'>
-								<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
-									<span className='font-medium text-sm tracking-tight leading-normal '>Level/Rank</span>
-									<div className='flex gap-2'>
-										<img src={`https://ygoprodeck.com/wp-content/uploads/2017/01/level.png`} alt={cardToInspect?.race}  className='w-6 h-6'/>
-										<span>{cardToInspect?.level}</span>
-									</div>
-								</div>
-
-								<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
-									<span className='font-medium text-sm tracking-tight leading-normal '>ATK</span>
-									<div className='flex gap-2'>
-										<Swords/>
-										<span>{cardToInspect?.atk}</span>
-									</div>
-								</div>
-
-								<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
-									<span className='font-medium text-sm tracking-tight leading-normal '>DEF</span>
-									<div className='flex gap-2'>
-										<Shield/>
-										<span>{cardToInspect?.def}</span>
-									</div>
+						<div className='flex flex-1  h-fit gap-4'>
+							<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
+								<span className='font-medium text-sm tracking-tight leading-normal '>Level/Rank</span>
+								<div className='flex gap-2'>
+									<img src={`https://ygoprodeck.com/wp-content/uploads/2017/01/level.png`} alt={cardToInspect?.race}  className='w-6 h-6'/>
+									<span>{cardToInspect?.level}</span>
 								</div>
 							</div>
 
-							<div className='flex flex-col flex-1  bg-zinc-800 p-2 gap-2'>
-								<span>Card Text</span>
-								<span>{cardToInspect?.desc}</span>
+							<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
+								<span className='font-medium text-sm tracking-tight leading-normal '>ATK</span>
+								<div className='flex gap-2'>
+									<Swords/>
+									<span>{cardToInspect?.atk}</span>
+								</div>
 							</div>
-	 					</div>
-	 				</div>
 
+							<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
+								<span className='font-medium text-sm tracking-tight leading-normal '>DEF</span>
+								<div className='flex gap-2'>
+									<Shield/>
+									<span>{cardToInspect?.def}</span>
+								</div>
+							</div>
+						</div>
 
-	 				<Dialog.Close asChild>
-	 				  <button className="IconButton" aria-label="Close" onClick={() => {setIsOpen(false), setCardToInspect(null)}}>
-	 					<X/>
-	 				  </button>
-	 				</Dialog.Close>
-	 			  </Dialog.Content>
-	 			</Dialog.Portal>
-	 		  </Dialog.Root>
-
-
-			   <Dialog.Root open={clearDeckModal}>
-	 			<Dialog.Portal>
-	 			  <Dialog.Overlay className="DialogOverlay " />
-	 			  <Dialog.Content className="DialogContent bg-zinc-700 text-white">
-	 				<Dialog.Title className="DialogTitle text-white">Limpar o deck</Dialog.Title>
-
-					<Dialog.Description>
-						Você tem certeza que deseja limpar o deck?
-
-					</Dialog.Description>
-
-					<div className='w-full h-fit min-h-8 flex justify-end gap-4'>
-						<button aria-label="Close" onClick={() => {setClearDeck(false)}} className='h-12 flex text-center bg-blue-500 justify-center items-center p-1'>
-							Cancelar
-						</button>
-
-						<button aria-label="Close" onClick={() => {clearDeck(); setClearDeck(false)}} className='h-12 flex text-center bg-red-500 justify-center items-center p-1'>
-							Limpar deck
-						</button>
+						<div className='flex flex-col flex-1  bg-zinc-800 p-2 gap-2'>
+							<span>Card Text</span>
+							<span>{cardToInspect?.desc}</span>
+						</div>
 					</div>
-
-	 				<Dialog.Close asChild>
-	 				  <button className="IconButton" aria-label="Close" onClick={() => {setClearDeck(false)}}>
-	 					<X/>
-	 				  </button>
-	 				</Dialog.Close>
-	 			  </Dialog.Content>
-	 			</Dialog.Portal>
-	 		  </Dialog.Root>
+				</div>
 
 
-			   <Dialog.Root open={help}>
-	 			<Dialog.Portal>
-	 			  <Dialog.Overlay className="DialogOverlay " />
-	 			  <Dialog.Content className="DialogContent bg-zinc-700 text-white">
-	 				<Dialog.Title className="DialogTitle text-white">Como usar o app</Dialog.Title>
+				<Dialog.Close asChild>
+					<button className="IconButton" aria-label="Close" onClick={() => {setIsOpen(false), setCardToInspect(null)}}>
+					<X/>
+					</button>
+				</Dialog.Close>
+				</Dialog.Content>
+			</Dialog.Portal>
+			</Dialog.Root>
 
-					<Dialog.Description>
-					<div className='flex flex-col gap-4 mt-4'>
-						<ol type="1" className='list-decimal ml-6'>
-							<li>Acesse o site <a href="https://ygoprodeck.com/" className='underline text-violet-500' target='_blank'>ygoprodeck</a> e vá até sua coleção</li>
-							<li>Clique em <strong>Tools</strong> e baixe como <strong>.csv</strong></li>
-							<li>Ao baixar o arquivo selecione ele nesse site</li>
-							<li>Ao importar o arquivo você verá uma lista com todas suas cartas</li>
-							<li>Clique com o botão direito para adicioná-las ao Main Deck</li>
-							<li>Clique com o botão esquerdo para ver os stats da carta</li>
-							<li>Você pode filtrar pelo nome da carta</li>
-							<li>Ao terminar de montar o Deck, selecione <strong>Baixar Deck</strong> e escolha o local de salvamento</li>
-							<li>Abra o jogo e selecione <strong>Deck Manager</strong></li>
-							<li>Clique em <strong>Import</strong> e em seguida <strong>Browse</strong></li>
-							<li>Importe o arquivo baixado</li>
-						</ol>  
 
-						<span>Obs. 1: As cartas do Extra deck são adicionadas automaticamente</span>
-						<span>Obs. 2: Não criei um Side Deck, mas ele pode ser adionado no jogo</span>
-					</div>
-					</Dialog.Description>
+			<Dialog.Root open={clearDeckModal}>
+			<Dialog.Portal>
+				<Dialog.Overlay className="DialogOverlay " />
+				<Dialog.Content className="DialogContent bg-zinc-700 text-white">
+				<Dialog.Title className="DialogTitle text-white">Limpar o deck</Dialog.Title>
 
-					<div className='w-full h-fit min-h-8 flex justify-end gap-4'>
+				<Dialog.Description>
+					Você tem certeza que deseja limpar o deck?
 
-						<button aria-label="Close" onClick={() => {setHelp(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
-							Entendi
-						</button>
-					</div>
+				</Dialog.Description>
 
-	 				<Dialog.Close asChild>
-	 				  <button className="IconButton" aria-label="Close" onClick={() => {setHelp(false)}}>
-	 					<X/>
-	 				  </button>
-	 				</Dialog.Close>
-	 			  </Dialog.Content>
-	 			</Dialog.Portal>
-	 		  </Dialog.Root>
+				<div className='w-full h-fit min-h-8 flex justify-end gap-4'>
+					<button aria-label="Close" onClick={() => {setClearDeck(false)}} className='h-12 flex text-center bg-blue-500 justify-center items-center p-1'>
+						Cancelar
+					</button>
+
+					<button aria-label="Close" onClick={() => {clearDeck(); setClearDeck(false)}} className='h-12 flex text-center bg-red-500 justify-center items-center p-1'>
+						Limpar deck
+					</button>
+				</div>
+
+				<Dialog.Close asChild>
+					<button className="IconButton" aria-label="Close" onClick={() => {setClearDeck(false)}}>
+					<X/>
+					</button>
+				</Dialog.Close>
+				</Dialog.Content>
+			</Dialog.Portal>
+			</Dialog.Root>
+
+
+			<Dialog.Root open={help}>
+			<Dialog.Portal>
+				<Dialog.Overlay className="DialogOverlay " />
+				<Dialog.Content className="DialogContent bg-zinc-700 text-white">
+				<Dialog.Title className="DialogTitle text-white">Como usar o app</Dialog.Title>
+
+				<Dialog.Description>
+				<div className='flex flex-col gap-4 mt-4'>
+					<ol type="1" className='list-decimal ml-6'>
+						<li>Acesse o site <a href="https://ygoprodeck.com/" className='underline text-violet-500' target='_blank'>ygoprodeck</a> e vá até sua coleção</li>
+						<li>Clique em <strong>Tools</strong> e baixe como <strong>.csv</strong></li>
+						<li>Ao baixar o arquivo selecione ele nesse site</li>
+						<li>Ao importar o arquivo você verá uma lista com todas suas cartas</li>
+						<li>Clique com o botão direito para adicioná-las ao Main Deck</li>
+						<li>Clique com o botão esquerdo para ver os stats da carta</li>
+						<li>Você pode filtrar pelo nome da carta</li>
+						<li>Ao terminar de montar o Deck, selecione <strong>Baixar Deck</strong> e escolha o local de salvamento</li>
+						<li>Abra o jogo e selecione <strong>Deck Manager</strong></li>
+						<li>Clique em <strong>Import</strong> e em seguida <strong>Browse</strong></li>
+						<li>Importe o arquivo baixado</li>
+					</ol>  
+
+					<span>Obs. 1: As cartas do Extra deck são adicionadas automaticamente</span>
+					<span>Obs. 2: Não criei um Side Deck, mas ele pode ser adionado no jogo</span>
+				</div>
+				</Dialog.Description>
+
+				<div className='w-full h-fit min-h-8 flex justify-end gap-4'>
+
+					<button aria-label="Close" onClick={() => {setHelp(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
+						Entendi
+					</button>
+				</div>
+
+				<Dialog.Close asChild>
+					<button className="IconButton" aria-label="Close" onClick={() => {setHelp(false)}}>
+					<X/>
+					</button>
+				</Dialog.Close>
+				</Dialog.Content>
+			</Dialog.Portal>
+			</Dialog.Root>
+
 		</div>
 	)
 }
