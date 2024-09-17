@@ -419,7 +419,7 @@ export default function App() {
 							<li>Importe o arquivo baixado</li>
 						</ol>  
 
-						<span>Obs. 1: As cartas do Extra deck são adicionadas automáticamente</span>
+						<span>Obs. 1: As cartas do Extra deck são adicionadas automaticamente</span>
 						<span>Obs. 2: Não criei um Side Deck, mas ele pode ser adionado no jogo</span>
 					</div>
 					</Dialog.Description>
