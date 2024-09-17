@@ -213,7 +213,7 @@ export default function App() {
 	}
 
 	function getCardInfo(cardid:string){
-		axios.get(`https:db.ygoprodeck.com/api/v7/cardinfo.php?id=${cardid}`).then((res) =>{
+		axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${cardid}`).then((res) =>{
 			setCardToInspect(res.data.data[0])
 			setIsOpen(true)
 		})
