@@ -83,7 +83,7 @@ export default function App() {
 					for(let i = 0; i < each.cardq; i++){
 						arr.push({
 							cardId: each.cardid,
-							img: `https:images.ygoprodeck.com/images/cards_small/${each.cardid}.jpg`,
+							img: `https://images.ygoprodeck.com/images/cards_small/${each.cardid}.jpg`,
 							cardIndexOnArray: each.cardid +`_${each.card_edition}` +`_${i}`,
 							name:each.cardname
 						})
