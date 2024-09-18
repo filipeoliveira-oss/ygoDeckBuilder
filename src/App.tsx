@@ -5,8 +5,10 @@ import axios from 'axios'
 import Papa from 'papaparse';
 import * as Dialog from '@radix-ui/react-dialog';
 import './modal.css'
-import { Book, CircleHelp, Search, Shield, Swords, X } from 'lucide-react';
+import { Book, CircleHelp, Search, Shield, Star, Swords, X } from 'lucide-react';
 import { saveAs } from 'file-saver';
+import { Tooltip } from 'react-tooltip'
+import 'react-tooltip/dist/react-tooltip.css'
 
 interface card {
     cardId: string | number,
@@ -60,6 +62,7 @@ export interface CardRoot {
   
 
 export default function App() {
+	
 
 
 	const [cards, setCards] = useState<card[]>([])
@@ -76,7 +79,7 @@ export default function App() {
 	const collectionRef  = useRef<any>(null)
 	const deckRef  = useRef<any>(null)
 	const [needToImportCollection, setNeedToImportCollection] = useState(false)
-	
+	const [AIModal, setAIModal] = useState(false)
 
 	function removeDeckFromCollection(collection:card[], deck:card[]){
 		deck.map(deckItem => {
@@ -122,7 +125,6 @@ export default function App() {
 		});
 
 	}
-
 	
 	const readDeck = async (event:any) =>{
 		event.preventDefault()
@@ -307,7 +309,6 @@ export default function App() {
 		})
 	}
 
-
 	function searchCard(e?:any){
 
 		if(e){
@@ -343,8 +344,42 @@ export default function App() {
 		}
 	}
 
+
+	function generateAIText(){
+		
+		let baseText = 'I need you to imagine that your a yu gi oh pro player and you know all the best tactics to win every single openent and I need you to think clearly to answer my questions.\nI will send a list containing their name and quantity of the card I have available for this deck. I need you to give the best possible deck within 40 to 50 cards and give a reasonable reason for your choices, What are the mechanics and how would you play.\n\n'
+		let collectionMap = new Map()
+		let collectionString = ''
+
+		cards.map((each:card) =>{
+			let currentqtd = collectionMap.get(each.name) || 0
+			collectionMap.set(each.name, currentqtd + 1)
+		})
+
+		for(let [key,value] of collectionMap){
+			collectionString+= `${key}: ${value}\n`
+		}
+
+		let FinalText = baseText + collectionString
+
+		navigator.clipboard.writeText(FinalText)
+		
+	}
+
+	function handleAI(){
+		if(cards.length < 1){
+			alert('Você precisa importar uma coleção primeiro!!!')
+			return 
+		}
+
+
+		generateAIText()
+		window.open('https://chat.openai.com', '_blank')
+	}
+
 	return (
 		<div className='flex flex-col h-screen w-screen items-center px-4 py-4 overflow-hidden '>
+			<Tooltip id="tooltip" place='bottom' />
 			<div className='flex gap-4 items-center justify-between w-full px-4 relative'>
 				<div className='flex gap-4'>
 					<button onClick={downloadDeck} className={`p-2 bg-violet-500 ${mainDeckCards.length > 0 ? '' : 'opacity-0 pointer-events-none'}`}>Baixar deck</button>
@@ -367,8 +402,9 @@ export default function App() {
 					</button>
 				</form>
 
-				<div className='absolute top-0 left-80 cursor-pointer'>
-					<CircleHelp onClick={() => setHelp(true)}/>
+				<div className='absolute top-0 left-80 cursor-pointer flex gap-4'>
+					<CircleHelp onClick={() => setHelp(true)} data-tooltip-content='Ajuda' data-tooltip-id="tooltip"/>
+					<Star size={24} onClick={() => setAIModal(true)} data-tooltip-content='Otimizar deck com IA' data-tooltip-id="tooltip"/>
 				</div>
 			</div>
 
@@ -555,7 +591,7 @@ export default function App() {
 				<Dialog.Title className="DialogTitle text-white">Importar Coleção</Dialog.Title>
 
 				<Dialog.Description>
-					<span>Ao importar o seu deck você precisa importar sua coleção</span>
+					<span>Ao importar o seu deck você precisa importar/reimportar sua coleção</span>
 				</Dialog.Description>
 
 
@@ -568,6 +604,33 @@ export default function App() {
 
 				<Dialog.Close asChild>
 					<button className="IconButton" aria-label="Close" onClick={() => {alert('Boa tentativa, importa a porra da coleção!!!')}}>
+					<X/>
+					</button>
+				</Dialog.Close>
+				</Dialog.Content>
+			</Dialog.Portal>
+			</Dialog.Root>
+
+			<Dialog.Root open={AIModal}>
+			<Dialog.Portal>
+				<Dialog.Overlay className="DialogOverlay " />
+				<Dialog.Content className="DialogContent bg-zinc-700 text-white">
+				<Dialog.Title className="DialogTitle text-white">Gerador de Deck</Dialog.Title>
+
+				<Dialog.Description>
+					<span>Para ter auxílio da IA para montar seu deck, um texto será enviado para o seu clipboard e você será redirecionado para o <strong>CHAT-GPT</strong>, lá você só precisa colar o texto e enviar</span>
+				</Dialog.Description>
+
+
+
+				<div className='w-full h-fit min-h-8 flex justify-end gap-4'>
+					<button aria-label="Close" onClick={() => {handleAI(), setAIModal(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
+						Estou pronto
+					</button>
+				</div>
+
+				<Dialog.Close asChild>
+					<button className="IconButton" aria-label="Close" onClick={() => setAIModal(false)}>
 					<X/>
 					</button>
 				</Dialog.Close>
