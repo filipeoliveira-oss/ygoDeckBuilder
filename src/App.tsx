@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import React, { LegacyRef, useEffect, useRef, useState } from 'react'
 import './App.css'
 import axios from 'axios'
 import Papa from 'papaparse';
@@ -73,6 +73,26 @@ export default function App() {
 	const [search, setSearch] = useState('')
 	const [clearDeckModal, setClearDeck] = useState(false)
 	const [help, setHelp] = useState(false)
+	const collectionRef  = useRef<any>(null)
+	const deckRef  = useRef<any>(null)
+	const [needToImportCollection, setNeedToImportCollection] = useState(false)
+	
+
+	function removeDeckFromCollection(collection:card[], deck:card[]){
+		deck.map(deckItem => {
+		  // Find index of the first matching item in the collection
+		  const index = collection.findIndex(
+			collectionItem => String(collectionItem.cardId) === String(deckItem.cardId)
+		  );
+		  // If a match is found, remove it from the collection
+		  if (index !== -1) {
+			collection.splice(index, 1);
+		  }
+		});
+
+		return collection
+	  };
+
 	const readCsv = async (event:any) =>{
 		Papa.parse(event.target.files[0], {
 			header: true,
@@ -89,12 +109,74 @@ export default function App() {
 						})
 					}
 				})
+
+				if(needToImportCollection){
+					let mainDeckSub = removeDeckFromCollection(arr, mainDeckCards)
+					arr = mainDeckSub
+				}
+				
 				setCards(arr.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId))))
 				setCurrentCards(arr.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId))))
+				setNeedToImportCollection(false)
 			},
 		});
+
 	}
+
 	
+	const readDeck = async (event:any) =>{
+		event.preventDefault()
+		const reader = new FileReader()
+
+		reader.onload = async (e) =>{
+			const deck = e.target?.result
+			let arrDeck = String(deck).split('\n').filter((str) =>{
+				return /\S/.test(str);
+			})
+			let extraIndex = arrDeck.indexOf(" #extra ")
+			let sideIndex = arrDeck.indexOf(" !side ")
+
+			let mainDeck = arrDeck.slice(1, extraIndex)
+			let extraDeck = arrDeck.slice(extraIndex + 1, sideIndex)
+
+			let auxMainDeck:card[] = []
+			let auxExtraDeck:card[] = []
+
+			mainDeck.map(async (each:string) =>{
+				let random = Math.random()
+				
+				await axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${each}`).then((res) =>{
+					auxMainDeck.push({
+						cardId: res.data.data[0].id,
+						img: res.data.data[0].card_images[0].image_url_small, 
+						cardIndexOnArray:res.data.data[0].id +`_common` +`_1` + random,
+						name:res.data.data[0].name
+					})
+				})
+
+			})
+
+			extraDeck.map(async (each:string) =>{
+				let random = Math.random()
+
+				await axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${each}`).then((res) =>{
+					auxExtraDeck.push({
+						cardId: res.data.data[0].id,
+						img: res.data.data[0].card_images[0].image_url_small, 
+						cardIndexOnArray:res.data.data[0].id +`_common` +`_1` + random,
+						name:res.data.data[0].name
+					})
+				})
+			})
+
+			setMainDeckCards(auxMainDeck.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId))))
+			setExtraDeckCards(auxExtraDeck.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId))))
+			setNeedToImportCollection(true)
+		}
+
+		reader.readAsText(event.target.files[0])
+	}
+
 	const MainDeck = () =>{
 		return(
 			<div className={`flex bg-blue-500 h-${showMainDeck && mainDeckCards.length > 0  ? 'full': 'fit'} flex-col gap-2`} >
@@ -108,7 +190,7 @@ export default function App() {
 				<div className={`h-full bg-zinc-950 w-full  grid grid-cols-cards overflow-auto ${showMainDeck ? '':'hidden'}`}>
 					{mainDeckCards.map((each:card) =>{
 						return(
-							<div key={each.cardId} className=" w-40 h-56 cursor-pointer" onClick={() => getCardInfo(each.cardId.toString())} onContextMenu={(e) => removeCardFromMainDeck(each, e)}>
+							<div key={each.cardIndexOnArray} className=" w-40 h-56 cursor-pointer" onClick={() => getCardInfo(each.cardId.toString())} onContextMenu={(e) => removeCardFromMainDeck(each, e)}>
 								<img src={each.img} alt={each.cardId.toString()}/>
 							</div>
 						)
@@ -131,7 +213,7 @@ export default function App() {
 				<div className={`h-full w-full bg-zinc-950 grid grid-cols-cards overflow-auto ${showExtraDeck ? '':'hidden'}`}>
 					{extraDeckCards.map((each:card) =>{
 						return(
-							<div key={each.cardId} className="w-40 h-56 cursor-pointer" onClick={() => getCardInfo(each.cardId.toString())} onContextMenu={(e) => removeCardFromExtraDeck(each, e)}>
+							<div key={each.cardIndexOnArray} className="w-40 h-56 cursor-pointer" onClick={() => getCardInfo(each.cardId.toString())} onContextMenu={(e) => removeCardFromExtraDeck(each, e)}>
 								<img src={each.img} alt={each.cardId.toString()}/>
 							</div>
 						)
@@ -246,6 +328,21 @@ export default function App() {
 		setSearch('')
 	}
 
+	function importCollection(){
+		if(collectionRef){
+			collectionRef?.current?.click()
+		}
+	}
+
+	function importDeck(){
+		if(deckRef){
+			deckRef?.current?.click()
+		}
+		if(collectionRef){
+			collectionRef.current.value = ''
+		}
+	}
+
 	return (
 		<div className='flex flex-col h-screen w-screen items-center px-4 py-4 overflow-hidden '>
 			<div className='flex gap-4 items-center justify-between w-full px-4 relative'>
@@ -254,9 +351,13 @@ export default function App() {
 					<button onClick={() => setClearDeck(true)} className={`p-2 bg-red-500 ${mainDeckCards.length > 0 ? '' : 'opacity-0 pointer-events-none'}`}>Limpar deck</button>
 				</div>
 				
-				<div className='flex gap-4'>
+				<div className='flex gap-4 items-center'>
 					<h1 className='font-medium text-sm tracking-tight leading-normal'>Yu Gi Oh Deck Builder</h1>
-					<input type="file" name="file" accept=".csv" className=' unset bg-violet-500' onChange={readCsv}/>
+					<button onClick={() => importDeck()} className='bg-orange-500 p-2 flex items-center justify-center'>Importar deck</button>
+					<input type="file" name="file" accept=".ydk" className=' unset bg-orange-500 hidden' onChange={readDeck} id='teste' ref={deckRef}/>
+
+					<button onClick={() => importCollection()} className='bg-violet-500 p-2 flex items-center justify-center'>Importar coleção</button>
+					<input type="file" name="file" accept=".csv" className=' unset bg-violet-500 hidden' onChange={readCsv} id='teste' ref={collectionRef}/>
 				</div>
 
 				<form className='flex gap-4 items-center justify-center' onSubmit={searchCard}>
@@ -446,6 +547,33 @@ export default function App() {
 			</Dialog.Portal>
 			</Dialog.Root>
 
+
+			<Dialog.Root open={needToImportCollection}>
+			<Dialog.Portal>
+				<Dialog.Overlay className="DialogOverlay " />
+				<Dialog.Content className="DialogContent bg-zinc-700 text-white">
+				<Dialog.Title className="DialogTitle text-white">Importar Coleção</Dialog.Title>
+
+				<Dialog.Description>
+					<span>Ao importar o seu deck você precisa importar sua coleção</span>
+				</Dialog.Description>
+
+
+
+				<div className='w-full h-fit min-h-8 flex justify-end gap-4'>
+					<button aria-label="Close" onClick={() => {importCollection()}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
+						Importar Coleção
+					</button>
+				</div>
+
+				<Dialog.Close asChild>
+					<button className="IconButton" aria-label="Close" onClick={() => {alert('Boa tentativa, importa a porra da coleção!!!')}}>
+					<X/>
+					</button>
+				</Dialog.Close>
+				</Dialog.Content>
+			</Dialog.Portal>
+			</Dialog.Root>
 		</div>
 	)
 }
