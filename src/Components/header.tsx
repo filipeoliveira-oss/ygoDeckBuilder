@@ -252,7 +252,7 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
             <Dialog.Root open={AIModal}>
             <Dialog.Portal>
                 <Dialog.Overlay className="DialogOverlay " />
-                <Dialog.Content className="DialogContent bg-zinc-700 text-white">
+                <Dialog.Content className="DialogContent bg-zinc-700 text-white border-2 border-violet-500">
                 <Dialog.Title className="DialogTitle text-white">Gerador de Deck</Dialog.Title>
 
                 <Dialog.Description>
@@ -279,7 +279,7 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
             <Dialog.Root open={help}>
             <Dialog.Portal>
                 <Dialog.Overlay className="DialogOverlay " />
-                <Dialog.Content className="DialogContent bg-zinc-700 text-white">
+                <Dialog.Content className="DialogContent bg-zinc-700 text-white border-2 border-violet-500">
                 <Dialog.Title className="DialogTitle text-white">Como usar o app</Dialog.Title>
 
                 <Dialog.Description>
@@ -322,7 +322,7 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
             <Dialog.Root open={needToImportCollection}>
                 <Dialog.Portal>
                     <Dialog.Overlay className="DialogOverlay " />
-                    <Dialog.Content className="DialogContent bg-zinc-700 text-white">
+                    <Dialog.Content className="DialogContent bg-zinc-700 text-white border-2 border-violet-500">
                     <Dialog.Title className="DialogTitle text-white">Importar Coleção</Dialog.Title>
 
                     <Dialog.Description>
@@ -349,7 +349,7 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
             <Dialog.Root open={clearDeckModal}>
                 <Dialog.Portal>
                     <Dialog.Overlay className="DialogOverlay " />
-                    <Dialog.Content className="DialogContent bg-zinc-700 text-white">
+                    <Dialog.Content className="DialogContent bg-zinc-700 text-white border-2 border-violet-500">
                     <Dialog.Title className="DialogTitle text-white">Limpar o deck</Dialog.Title>
 
                     <Dialog.Description>

@@ -90,7 +90,7 @@ export default function App() {
 				<Dialog.Root open={isCardInspecting}>
 					<Dialog.Portal>
 						<Dialog.Overlay className="DialogOverlay " />
-						<Dialog.Content className="DialogContent bg-zinc-700 text-white">
+						<Dialog.Content className="DialogContent bg-zinc-950 text-white border-2 border-violet-500">
 						<Dialog.Title className="DialogTitle text-white">{cardToInspect?.name}</Dialog.Title>
 
 						<div className='flex w-full h-full gap-4'>
@@ -100,7 +100,7 @@ export default function App() {
 							
 							<div className='h-full w-full  gap-4 flex flex-col text-white bg'>
 								<div className='flex flex-1  h-fit gap-4'>
-									<div className='w-full h-full flex flex-col bg-zinc-800 p-2 gap-2'>
+									<div className='w-full h-full flex flex-col  p-2 gap-2 inspectItemBg'>
 										<span className='font-medium text-sm tracking-tight leading-normal '>Type</span>
 										<div className='flex gap-2'>
 											<Book/>
@@ -108,7 +108,7 @@ export default function App() {
 										</div>
 									</div>
 
-									<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
+									<div className='w-full h-full flex flex-col  inspectItemBg p-2 gap-2'>
 										<span className='font-medium text-sm tracking-tight leading-normal '>Attribute</span>
 										<div className='flex gap-2'>
 											<img src={`https://images.ygoprodeck.com/images/cards/${cardToInspect?.attribute}.jpg`} alt={cardToInspect?.attribute}  className='w-6 h-6'/>
@@ -116,7 +116,7 @@ export default function App() {
 										</div>
 									</div>
 
-									<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
+									<div className='w-full h-full flex flex-col  inspectItemBg p-2 gap-2'>
 										<span className='font-medium text-sm tracking-tight leading-normal '>typing</span>
 										<div className='flex gap-2'>
 											<img src={`https://images.ygoprodeck.com/images/cards/icons/race/${cardToInspect?.race}.png`} alt={cardToInspect?.race}  className='w-6 h-6'/>
@@ -126,7 +126,7 @@ export default function App() {
 								</div>
 								
 								<div className='flex flex-1  h-fit gap-4'>
-									<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
+									<div className='w-full h-full flex flex-col  inspectItemBg p-2 gap-2'>
 										<span className='font-medium text-sm tracking-tight leading-normal '>Level/Rank</span>
 										<div className='flex gap-2'>
 											<img src={`https://ygoprodeck.com/wp-content/uploads/2017/01/level.png`} alt={cardToInspect?.race}  className='w-6 h-6'/>
@@ -134,7 +134,7 @@ export default function App() {
 										</div>
 									</div>
 
-									<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
+									<div className='w-full h-full flex flex-col inspectItemBg p-2 gap-2'>
 										<span className='font-medium text-sm tracking-tight leading-normal '>ATK</span>
 										<div className='flex gap-2'>
 											<Swords/>
@@ -142,7 +142,7 @@ export default function App() {
 										</div>
 									</div>
 
-									<div className='w-full h-full flex flex-col  bg-zinc-800 p-2 gap-2'>
+									<div className='w-full h-full flex flex-col  inspectItemBg p-2 gap-2'>
 										<span className='font-medium text-sm tracking-tight leading-normal '>DEF</span>
 										<div className='flex gap-2'>
 											<Shield/>
@@ -151,7 +151,7 @@ export default function App() {
 									</div>
 								</div>
 
-								<div className='flex flex-col flex-1  bg-zinc-800 p-2 gap-2'>
+								<div className='flex flex-col flex-1  inspectItemBg p-2 gap-2'>
 									<span>Card Text</span>
 									<span>{cardToInspect?.desc}</span>
 								</div>

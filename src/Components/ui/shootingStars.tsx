@@ -1,4 +1,4 @@
-"use client";
+
 import { cn } from "../../helpers/utils";
 import React, { useEffect, useState, useRef } from "react";
 
