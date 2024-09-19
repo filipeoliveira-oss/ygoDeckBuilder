@@ -232,8 +232,8 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
                     <Action onClick={() => importCollection()}>Importar Coleção</Action>
                     <Action onClick={downloadDeck} variant={mainDeckCards.length > 0 || extraDeckCards.length > 0 ? 'primary' : 'disabled'}>Exportar Deck</Action>
                     <Action onClick={() => setClearDeck(true)} variant={mainDeckCards.length > 0 || extraDeckCards.length > 0 ? 'primary' : 'disabled'}>Limpar Deck</Action>
+                    <Action onClick={() => setAIModal(true)}>Otimizar com IA</Action>
                     <Action onClick={() => setHelp(true)}>Ajuda</Action>
-                    <Action onClick={() => setAIModal(true)}>Otimizar</Action>
 
                     <input type="file" name="file" accept=".csv" className='hidden' onChange={readCsv} id='teste' ref={collectionRef}/>
                     <input type="file" name="file" accept=".ydk" className='hidden' onChange={readDeck} id='teste' ref={deckRef}/>

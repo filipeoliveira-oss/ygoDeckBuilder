@@ -2,7 +2,7 @@ import { getCardInfo } from "../helpers/functions"
 import { card } from "../helpers/interfaces"
 import axios from 'axios'
 import { CardBody, CardContainer, CardItem } from "./ui/3dCard"
-
+import {  toast } from 'react-toastify';
 interface collectionInterface{
     currentCards:card[],
     setCardToInspect:Function, 
@@ -22,7 +22,17 @@ export default function Collection({currentCards,setCardToInspect,setIsCardInspe
     function sendCardToDeck(card:card, e:any){
 		e.preventDefault()
 		let extraDeckTypes = ["Fusion Monster","Link Monster","Pendulum Effect Fusion Monster","Synchro Monster","Synchro Pendulum Effect Monster","Synchro Tuner Monster","XYZ Monster","XYZ Pendulum Effect Monster"]
-		
+		let fullDeck = mainDeckCards.concat(extraDeckCards)
+		let quantityInDeck = fullDeck.filter((each:card) =>{
+			return each.cardId == card.cardId
+		})
+
+		if(quantityInDeck.length >= 3){
+			toast.error(`Você atingiu o limite máximo da carta: ${card.name}`)
+
+			return
+		}
+
 		axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${card.cardId}`).then((res) =>{
 			let type = res.data.data[0].type
 			if(extraDeckTypes.some((each:string) =>{return each === type})){

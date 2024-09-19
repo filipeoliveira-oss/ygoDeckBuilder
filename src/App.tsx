@@ -4,8 +4,6 @@ import './App.css'
 import * as Dialog from '@radix-ui/react-dialog';
 import './modal.css'
 import { Book, Shield,  Swords, X } from 'lucide-react';
-import { Tooltip } from 'react-tooltip'
-import 'react-tooltip/dist/react-tooltip.css'
 import Header from './Components/header';
 import { card, CardRoot } from './helpers/interfaces';
 import MainDeck from './Components/mainDeck';
@@ -13,7 +11,8 @@ import ExtraDeck from './Components/extraDeck';
 import Collection from './Components/collection';
 import { ShootingStars } from './Components/ui/shootingStars';
 import { StarsBackground } from './Components/ui/starsBackground';
-  
+import { ToastContainer } from 'react-toastify';
+
 export default function App() {
 	const [cards, setCards] = useState<card[]>([])
 	const [mainDeckCards, setMainDeckCards] = useState<card[]>([])
@@ -27,8 +26,8 @@ export default function App() {
 		<>
 			<ShootingStars starWidth={20} starHeight={2} minDelay={3000} maxDelay={4200}/>
 			<StarsBackground starDensity={0.00130}/>
+			<ToastContainer  closeOnClick theme='dark' />
 			<div className='flex flex-col h-screen w-screen items-center overflow-hidden relative' >
-				<Tooltip id="tooltip" place='bottom' />
 				<Header 
 					cards={cards} 
 					extraDeckCards={extraDeckCards} 

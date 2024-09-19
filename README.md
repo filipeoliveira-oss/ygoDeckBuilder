@@ -6,6 +6,8 @@ This project is designed to help Yu-Gi-Oh! players build decks more easily by us
 
 You can visit the current website in [YGO Deck Builder](https://ygodeckbuildercoheso.netlify.app/)
 
+#### Please be aware that this site is still under constant development
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. (PENSAR SE VAI REMOVER)See deployment for notes on how to deploy the project on a live system.
