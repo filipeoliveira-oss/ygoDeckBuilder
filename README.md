@@ -1,50 +1,59 @@
-# React + TypeScript + Vite
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white) ![Framer](https://img.shields.io/badge/Framer-black?style=for-the-badge&logo=framer&logoColor=blue) ![Radix UI](https://img.shields.io/badge/radix%20ui-161618.svg?style=for-the-badge&logo=radix-ui&logoColor=white)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Yu Gi Oh Deck Builder
 
-Currently, two official plugins are available:
+This project is designed to help Yu-Gi-Oh! players build decks more easily by using data from existing websites. It allows users to create new decks, import their card collections, and view detailed card stats. With these features, players can efficiently manage their cards and make better deck-building decisions when playing with friends.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting Started
 
-## Expanding the ESLint configuration
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. (PENSAR SE VAI REMOVER)See deployment for notes on how to deploy the project on a live system.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Prerequisites
 
-- Configure the top-level `parserOptions` property like this:
+To run this project you must have NodeJs v20.17.0 (or higher) installed. To do so, please head to their website [NodeJs](https://nodejs.org/)
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Installing
+
+First you need to clone this project
+
+```
+git clone https://github.com/filipeoliveira-oss/ygoDeckBuilder.git
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+once you have it cloned, run this command in the root of the repository
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
 ```
+npm install
+```
+
+once installed, run
+
+```
+npm run dev
+```
+
+Done, you have your Dev Environment up and running.
+
+![screenshot](./public/main.png)
+
+## Built With
+
+* [React](https://react.dev/) - The library for web and native user interfaces
+* [TypeScript](https://www.typescriptlang.org/) - Strongly typed programming language that builds on JavaScrip
+* [YGOProdeck](https://ygoprodeck.com/) - A Yu Gi Oh Community
+* [Axios](https://axios-http.com/) - Promise based HTTP client for the browser and node.js
+* [Framer Motion](https://www.framer.com/motion/) - Framer Motion animation library
+* [Radix-ui](https://www.radix-ui.com/primitives) - A component library
+* [papaparse](https://www.papaparse.com/) -  Powerful CSV Parser for JavaScript
+* [file-saver](https://github.com/eligrey/FileSaver.js#readme) - Solution to saving files on the client-side
+
+## Acknowledgments
+
+* I’m incredibly grateful to all my friends who inspired me to create this solution for our game.
+* A huge thanks to all the creators of the technologies used, more specially for YGO Pro Deck to make this website possible due to it's [API](https://ygoprodeck.com/api-guide/) and a ton of other features in their website
+
+## Contact
+
+If this project helped you in any way or if you just want to talk and give ideas to this project, please feel free to contact me
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Profile-blue?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/filipeoliveirasilva/)
