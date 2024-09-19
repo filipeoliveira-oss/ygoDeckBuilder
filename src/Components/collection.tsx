@@ -1,6 +1,7 @@
 import { getCardInfo } from "../helpers/functions"
 import { card } from "../helpers/interfaces"
 import axios from 'axios'
+import { CardBody, CardContainer, CardItem } from "./ui/3dCard"
 
 interface collectionInterface{
     currentCards:card[],
@@ -53,9 +54,13 @@ export default function Collection({currentCards,setCardToInspect,setIsCardInspe
             <div className='flex-1 flex-col overflow-x-auto grid grid-cols-cards gap-4 pb-4 h-full items-center justify-center rounded-2xl pt-2'>
 				{currentCards.map((card:card)=>{
 					return(
-						<div key={card.cardIndexOnArray} className=" w-40 h-56 cursor-pointer" onClick={()=> getCardInfo(card.cardId.toString(), setCardToInspect, setIsCardInspecting)} onContextMenuCapture={(e)=> sendCardToDeck(card, e)}>
-							<img src={card.img} alt={card.cardId.toString()}/>
-						</div>
+						<CardContainer>
+							<CardBody key={card.cardIndexOnArray} className=" w-40 h-56 cursor-pointer" >
+								<CardItem translateZ="90" onClick={()=> getCardInfo(card.cardId.toString(), setCardToInspect, setIsCardInspecting)} onContextMenuCapture={(e:any)=> sendCardToDeck(card, e)}>
+									<img src={card.img} alt={card.cardId.toString()}/>
+								</CardItem>
+							</CardBody>
+						</CardContainer>
 					)
 				})}
 			</div>
