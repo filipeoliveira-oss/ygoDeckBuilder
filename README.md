@@ -4,6 +4,8 @@
 
 This project is designed to help Yu-Gi-Oh! players build decks more easily by using data from existing websites. It allows users to create new decks, import their card collections, and view detailed card stats. With these features, players can efficiently manage their cards and make better deck-building decisions when playing with friends.
 
+You can visit the current website in [YGO Deck Builder](https://ygodeckbuildercoheso.netlify.app/)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. (PENSAR SE VAI REMOVER)See deployment for notes on how to deploy the project on a live system.
