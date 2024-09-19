@@ -1,4 +1,4 @@
-import { CircleHelp, Search, Star, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { card } from "../helpers/interfaces";
 import { useRef, useState } from "react";
 import * as Dialog from '@radix-ui/react-dialog';

@@ -39,7 +39,7 @@ export default function App() {
 					setMainDeckCards={setMainDeckCards} 
 					setSearch={setSearch}
 				/>
-				
+
 				<div className='h-full w-full flex items-center justify-center gap-4 p-4 overflow-hidden'>
 					<div className='h-full w-[60%] border border-zinc-400 rounded-2xl gap-1 flex flex-col' > 
 						<div className='w-full h-[69%] rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0'>
