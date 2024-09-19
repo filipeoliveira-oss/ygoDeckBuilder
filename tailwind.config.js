@@ -11,7 +11,7 @@ export default {
         '16': 'repeat(16, minmax(0, 1fr))',
 
         // Complex site-specific column configuration
-        'cards': 'repeat(auto-fit, minmax(160px, 1fr))',
+        'cards': 'repeat(auto-fit, 10rem)',
       }
     }
   },
