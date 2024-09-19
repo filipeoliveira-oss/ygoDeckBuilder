@@ -13,7 +13,17 @@ export default {
         // Complex site-specific column configuration
         'cards': 'repeat(auto-fit, 10rem)',
       }
+    },
+    keyframes:{
+      showBorder:{
+        '100%': {width:'100%'}
+      }
+    },
+    animation:{
+      showBorder: 'showBorder 200ms ease-in-out forwards'
     }
   },
-  plugins: [],
+  plugins: [
+    
+  ],
 }

@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { card } from "../helpers/interfaces"
 import { getCardInfo } from "../helpers/functions"
 
@@ -14,9 +13,7 @@ interface mainDeckInterface{
 }
 
 export default function MainDeck({mainDeckCards,setCardToInspect,setIsCardInspecting,setCards,setCurrentCards,setMainDeckCards,cards,search} :mainDeckInterface){
-
-	const [showMainDeck, setShowMainDeck] = useState(true)
-
+    
     function removeCardFromMainDeck(card:card, e:any){
 		e.preventDefault()
 		let aux = cards.filter((each:card) =>{
@@ -32,15 +29,12 @@ export default function MainDeck({mainDeckCards,setCardToInspect,setIsCardInspec
 	}
 
     return(
-        <div className={`flex bg-blue-500 h-${showMainDeck && mainDeckCards.length > 0  ? 'full': 'fit'} flex-col gap-2`} >
-            <div className='flex w-full h-fit items-center justify-between px-4 cursor-pointer' onClick={()=>{setShowMainDeck(!showMainDeck)}}>
-                <div className='flex gap-4 items-center'>
-                    <h1 className='font-medium text-sm tracking-tight leading-normal '>Main Deck</h1>
-                    <span>{mainDeckCards.length}/40</span>
-                </div>
-                <span className={showMainDeck ? 'rotate-90' : 'rotate-0'} >&gt;</span>
+        <div className={`flex h-full flex-col gap-2 rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0`} >
+            <div className='flex w-full h-8 items-center gap-4 deckHeader rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0'>
+                <h1 className='font-semibold text-base tracking-tight leading-normal ml-4'>Main Deck</h1>
+                <span className="font-semibold text-base">{mainDeckCards.length} </span>
             </div>
-            <div className={`h-full bg-zinc-950 w-full  grid grid-cols-cards gap-4 overflow-auto ${showMainDeck ? '':'hidden'}`}>
+            <div className={`h-full bg-transparent w-full grid grid-cols-cards gap-4 overflow-auto px-4 pb-4`}>
                 {mainDeckCards.map((each:card) =>{
                     return(
                         <div key={each.cardIndexOnArray} className=" w-40 h-56 cursor-pointer" onClick={() => getCardInfo(each.cardId.toString(),setCardToInspect, setIsCardInspecting)} onContextMenu={(e) => removeCardFromMainDeck(each, e)}>

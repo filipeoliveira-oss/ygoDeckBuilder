@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { card } from "../helpers/interfaces"
 import { getCardInfo } from "../helpers/functions"
 
@@ -15,8 +14,6 @@ interface extraDeckInterface{
 
 export default function ExtraDeck({cards,search,setExtraDeckCards,extraDeckCards,setCards,setCurrentCards,setCardToInspect,setIsCardInspecting} :extraDeckInterface){
 
-	const [showExtraDeck, setShowExtraDeck] = useState(true)
-
     function removeCardFromExtraDeck(card:card, e:any){
 		e.preventDefault()
 		let aux = cards.filter((each:card) =>{
@@ -32,15 +29,12 @@ export default function ExtraDeck({cards,search,setExtraDeckCards,extraDeckCards
 	}
 
     return(
-        <div className={`flex bg-blue-500 h-${showExtraDeck && extraDeckCards.length > 0 ? 'full': 'fit'} flex-col gap-2`}>
-            <div className='flex w-full h-fit items-center justify-between px-4 cursor-pointer' onClick={()=>{setShowExtraDeck(!showExtraDeck)}}>
-                <div className='flex gap-4 items-center'>
-                    <h1 className='font-medium text-sm tracking-tight leading-normal '>Extra Deck</h1>
-                    <span>{extraDeckCards.length}/20</span>
-                </div>
-                <span className={showExtraDeck ? 'rotate-90' : 'rotate-0'} >&gt;</span>
+        <div className={`flex h-full flex-col`}>
+            <div className='flex w-full h-8 items-center gap-4 deckHeader '>
+                <h1 className='font-semibold text-base tracking-tight leading-normal ml-4'>Extra Deck</h1>
+                <span className="font-semibold text-base">{extraDeckCards.length} </span>
             </div>
-            <div className={`h-full w-full bg-zinc-950 grid grid-cols-cards overflow-auto ${showExtraDeck ? '':'hidden'}`}>
+            <div className={`h-full bg-transparent w-full grid grid-cols-cards gap-4 overflow-auto px-4 pt-2 pb-4`}>
                 {extraDeckCards.map((each:card) =>{
                     return(
                         <div key={each.cardIndexOnArray} className="w-40 h-56 cursor-pointer" onClick={() => getCardInfo(each.cardId.toString(), setCardToInspect, setIsCardInspecting)} onContextMenu={(e) => removeCardFromExtraDeck(each, e)}>

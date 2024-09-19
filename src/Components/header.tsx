@@ -5,7 +5,9 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { saveAs } from 'file-saver';
 import Papa from 'papaparse';
 import axios from 'axios'
-
+import { Button } from "./ui/button";
+import { Action } from "./ui/headerAction";
+import logo from '/logo.png'
 
 interface headerInterface{
     mainDeckCards: card[],
@@ -179,7 +181,7 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
 
     function generateAIText(){
 		
-		let baseText = 'I need you to imagine that your a yu gi oh pro player and you know all the best tactics to win every single openent and I need you to think clearly to answer my questions.\nI will send a list containing their name and quantity of the card I have available for this deck. I need you to give the best possible deck within 40 to 50 cards and give a reasonable reason for your choices, What are the mechanics and how would you play.\n\n'
+		let baseText = 'I need you to imagine that your a yu gi oh pro player and you know all the best tactics to win every single oponent and I need you to think clearly to answer my questions.\nI will send a list containing their name and quantity of the card I have available for this deck. I need you to give the best possible deck within 40 to 50 cards and give a reasonable reason for your choices, What are the mechanics and how would you play.\n\n'
 		let collectionMap = new Map()
 		let collectionString = ''
 
@@ -219,33 +221,31 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
 
     return(
         <>
-            
-            <div className='flex gap-4 items-center justify-between w-full px-4 relative'>
-                <div className='flex gap-4'>
-                    <button onClick={downloadDeck} className={`p-2 bg-violet-500 ${mainDeckCards.length > 0 ? '' : 'opacity-0 pointer-events-none'}`}>Baixar deck</button>
-                    <button onClick={() => setClearDeck(true)} className={`p-2 bg-red-500 ${mainDeckCards.length > 0 || extraDeckCards.length > 0 ? '' : 'opacity-0 pointer-events-none'}`}>Limpar deck</button>
-                </div>
-                
-                <div className='flex gap-4 items-center'>
-                    <h1 className='font-medium text-sm tracking-tight leading-normal'>Yu Gi Oh Deck Builder</h1>
-                    <button onClick={() => importDeck()} className='bg-orange-500 p-2 flex items-center justify-center'>Importar deck</button>
-                    <input type="file" name="file" accept=".ydk" className=' unset bg-orange-500 hidden' onChange={readDeck} id='teste' ref={deckRef}/>
+            <div className="flex justify-between px-4 w-full h-12 items-center">
 
-                    <button onClick={() => importCollection()} className='bg-violet-500 p-2 flex items-center justify-center'>Importar coleção</button>
-                    <input type="file" name="file" accept=".csv" className=' unset bg-violet-500 hidden' onChange={readCsv} id='teste' ref={collectionRef}/>
+                <div>
+                    <img src={logo} alt="Logo" className="w-12 h-full"/>
                 </div>
 
-                <form className='flex gap-4 items-center justify-center' onSubmit={searchCard}>
-                    <input type="text" className='input' placeholder='Buscar Carta' onChange={(e) => setSearch(e.target.value)}/>
+                <div className="flex px-2 items-center justify-center gap-4">
+                    <Action onClick={() => importDeck()}>Importar Deck</Action>
+                    <Action onClick={() => importCollection()}>Importar Coleção</Action>
+                    <Action onClick={downloadDeck} variant={mainDeckCards.length > 0 || extraDeckCards.length > 0 ? 'primary' : 'disabled'}>Exportar Deck</Action>
+                    <Action onClick={() => setClearDeck(true)} variant={mainDeckCards.length > 0 || extraDeckCards.length > 0 ? 'primary' : 'disabled'}>Limpar Deck</Action>
+                    <Action onClick={() => setHelp(true)}>Ajuda</Action>
+                    <Action onClick={() => setAIModal(true)}>Otimizar</Action>
+
+                    <input type="file" name="file" accept=".csv" className='hidden' onChange={readCsv} id='teste' ref={collectionRef}/>
+                    <input type="file" name="file" accept=".ydk" className='hidden' onChange={readDeck} id='teste' ref={deckRef}/>
+                </div>
+
+                <form className=' flex gap-4 items-center justify-center h-[80%] p-2 border-zinc-500 border-2 focus-within:border-violet-500 focus-within:border-2 focus-within:ring-violet-500' onSubmit={searchCard}>
+                    <input type="text" className='text-zinc-300' placeholder='Buscar Carta' onChange={(e) => setSearch(e.target.value)}/>
                     <button type='submit'>
-                        <Search onClick={searchCard}/>
+                        <Search onClick={searchCard} />
                     </button>
                 </form>
 
-                <div className='absolute top-0 left-80 cursor-pointer flex gap-4'>
-                    <CircleHelp onClick={() => setHelp(true)} data-tooltip-content='Ajuda' data-tooltip-id="tooltip"/>
-                    <Star size={24} onClick={() => setAIModal(true)} data-tooltip-content='Otimizar deck com IA' data-tooltip-id="tooltip"/>
-                </div>
             </div>
             
 
@@ -262,9 +262,9 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
 
 
                 <div className='w-full h-fit min-h-8 flex justify-end gap-4'>
-                    <button aria-label="Close" onClick={() => {handleAI(), setAIModal(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
+                    <Button aria-label="Close" onClick={() => {handleAI(), setAIModal(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
                         Estou pronto
-                    </button>
+                    </Button>
                 </div>
 
                 <Dialog.Close asChild>
@@ -305,9 +305,9 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
 
                 <div className='w-full h-fit min-h-8 flex justify-end gap-4'>
 
-                    <button aria-label="Close" onClick={() => {setHelp(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
+                    <Button aria-label="Close" onClick={() => {setHelp(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
                         Entendi
-                    </button>
+                    </Button>
                 </div>
 
                 <Dialog.Close asChild>
@@ -332,9 +332,9 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
 
 
                     <div className='w-full h-fit min-h-8 flex justify-end gap-4'>
-                        <button aria-label="Close" onClick={() => {importCollection()}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
+                        <Button aria-label="Close" onClick={() => {importCollection()}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
                             Importar Coleção
-                        </button>
+                        </Button>
                     </div>
 
                     <Dialog.Close asChild>
@@ -358,13 +358,13 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
                     </Dialog.Description>
 
                     <div className='w-full h-fit min-h-8 flex justify-end gap-4'>
-                        <button aria-label="Close" onClick={() => {setClearDeck(false)}} className='h-12 flex text-center bg-blue-500 justify-center items-center p-1'>
+                        <Button aria-label="Close" onClick={() => {setClearDeck(false)}} className='h-12 flex text-center justify-center items-center p-1'>
                             Cancelar
-                        </button>
+                        </Button>
 
-                        <button aria-label="Close" onClick={() => {clearDeck(); setClearDeck(false)}} className='h-12 flex text-center bg-red-500 justify-center items-center p-1'>
+                        <Button aria-label="Close" onClick={() => {clearDeck(); setClearDeck(false)}} className='h-12 flex text-center bg-red-500 justify-center items-center p-1 hover:bg-red-500'>
                             Limpar deck
-                        </button>
+                        </Button>
                     </div>
 
                     <Dialog.Close asChild>

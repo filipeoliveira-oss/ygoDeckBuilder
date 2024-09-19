@@ -46,14 +46,19 @@ export default function Collection({currentCards,setCardToInspect,setIsCardInspe
 	}
 
     return(
-        <div className='flex-1 flex-col overflow-x-auto grid grid-cols-cards gap-4 pb-4'>
-            {currentCards.map((card:card)=>{
-                return(
-                    <div key={card.cardIndexOnArray} className=" w-40 h-56 cursor-pointer" onClick={()=> getCardInfo(card.cardId.toString(), setCardToInspect, setIsCardInspecting)} onContextMenuCapture={(e)=> sendCardToDeck(card, e)}>
-                        <img src={card.img} alt={card.cardId.toString()}/>
-                    </div>
-                )
-            })}
+        <div className={`flex h-full flex-col`}>
+            <div className='flex w-full h-8 items-center gap-4 deckHeader rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0'>
+                <h1 className='font-semibold text-base tracking-tight leading-normal ml-4'>Collection</h1>
+            </div>
+            <div className='flex-1 flex-col overflow-x-auto grid grid-cols-cards gap-4 pb-4 h-full items-center justify-center rounded-2xl pt-2'>
+				{currentCards.map((card:card)=>{
+					return(
+						<div key={card.cardIndexOnArray} className=" w-40 h-56 cursor-pointer" onClick={()=> getCardInfo(card.cardId.toString(), setCardToInspect, setIsCardInspecting)} onContextMenuCapture={(e)=> sendCardToDeck(card, e)}>
+							<img src={card.img} alt={card.cardId.toString()}/>
+						</div>
+					)
+				})}
+			</div>
         </div>
     )
 }
