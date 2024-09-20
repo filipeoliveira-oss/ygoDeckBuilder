@@ -1,5 +1,5 @@
 import { Search, X } from "lucide-react";
-import { card } from "../helpers/interfaces";
+import { card, csvCollection } from "../helpers/interfaces";
 import { useRef, useState } from "react";
 import * as Dialog from '@radix-ui/react-dialog';
 import { saveAs } from 'file-saver';
@@ -75,7 +75,8 @@ export default function Header(){
 			skipEmptyLines: true,
 			complete: function (results:any) {
 				let arr:card[] = []
-				results.data.map((each:any)=>{
+                let data:csvCollection[] = results.data
+				data.map((each:any)=>{
 					for(let i = 0; i < each.cardq; i++){
 						arr.push({
 							cardId: each.cardid,

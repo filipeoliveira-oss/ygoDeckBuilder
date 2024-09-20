@@ -47,3 +47,14 @@ ebay_price: string
 amazon_price: string
 coolstuffinc_price: string
 }
+
+export interface csvCollection{
+	cardname:string,
+	cardq:number,
+	cardrarity:string,
+	card_edition:string,
+	cardset:string,
+	cardcode:string,
+	cardid:number,
+	print_id:string
+}
