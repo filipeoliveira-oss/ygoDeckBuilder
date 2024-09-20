@@ -3,21 +3,21 @@ import { card } from "../helpers/interfaces"
 import axios from 'axios'
 import { CardBody, CardContainer, CardItem } from "./ui/3dCard"
 import {  toast } from 'react-toastify';
-interface collectionInterface{
-    currentCards:card[],
-    setCardToInspect:Function, 
-    setIsCardInspecting:Function,
-    setExtraDeckCards:Function,
-    setCards:Function,
-    setCurrentCards:Function,
-    cards:card[],
-    search:string
-    extraDeckCards:card[],
-    setMainDeckCards:Function,
-    mainDeckCards:card[]
-}
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { cardsAtom, cardToInspectAtom, currentCardsAtom, extraDeckCardsAtom, isCardInspectingAtom, mainDeckCardsAtom, searchAtom } from "../helpers/atoms";
 
-export default function Collection({currentCards,setCardToInspect,setIsCardInspecting,setCards,setCurrentCards,setExtraDeckCards,cards,search,extraDeckCards,mainDeckCards,setMainDeckCards}:collectionInterface){
+
+export default function Collection(){
+
+	//ATOMS
+	const [cards,setCards] = useRecoilState(cardsAtom)
+	const [currentCards, setCurrentCards] = useRecoilState(currentCardsAtom)
+	const [extraDeckCards, setExtraDeckCards] = useRecoilState(extraDeckCardsAtom)
+	const [mainDeckCards, setMainDeckCards] = useRecoilState(mainDeckCardsAtom)
+	const search = useRecoilValue(searchAtom)
+	const setCardToInspect = useSetRecoilState(cardToInspectAtom)
+    const setIsCardInspecting = useSetRecoilState(isCardInspectingAtom)
+
 
     function sendCardToDeck(card:card, e:any){
 		e.preventDefault()
@@ -64,7 +64,7 @@ export default function Collection({currentCards,setCardToInspect,setIsCardInspe
             <div className='flex-1 flex-col overflow-x-auto grid grid-cols-cards gap-4 pb-4 h-full items-center justify-center rounded-2xl pt-2'>
 				{currentCards.map((card:card)=>{
 					return(
-						<CardContainer>
+						<CardContainer key={card.cardIndexOnArray}>
 							<CardBody key={card.cardIndexOnArray} className=" w-40 h-56 cursor-pointer" >
 								<CardItem translateZ="90" onClick={()=> getCardInfo(card.cardId.toString(), setCardToInspect, setIsCardInspecting)} onContextMenuCapture={(e:any)=> sendCardToDeck(card, e)}>
 									<img src={card.img} alt={card.cardId.toString()}/>

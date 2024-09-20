@@ -8,27 +8,29 @@ import axios from 'axios'
 import { Button } from "./ui/button";
 import { Action } from "./ui/headerAction";
 import logo from '/logo.png'
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { cardsAtom, currentCardsAtom, extraDeckCardsAtom, mainDeckCardsAtom, searchAtom } from "../helpers/atoms";
 
-interface headerInterface{
-    mainDeckCards: card[],
-    setSearch:Function,
-    cards: card[],
-    extraDeckCards:card[],
-    setCards:Function,
-    setCurrentCards:Function,
-    setMainDeckCards:Function,
-    setExtraDeckCards:Function,
-    search:string
-}
+export default function Header(){
+    
+    const [collection, setCollection] = useState<card[]>([])
 
-export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,setCards,setCurrentCards,setExtraDeckCards,setMainDeckCards,search}:headerInterface){
-	const collectionRef  = useRef<any>(null)
-	const deckRef  = useRef<any>(null)
+    //ATOMS
+    const [cards, setCards] = useRecoilState(cardsAtom)
+    const [extraDeckCards, setExtraDeckCards] = useRecoilState(extraDeckCardsAtom)
+    const [mainDeckCards, setMainDeckCards] = useRecoilState(mainDeckCardsAtom)
+    const [search, setSearch] = useRecoilState(searchAtom)
+    const setCurrentCards = useSetRecoilState(currentCardsAtom)
+
+    //MODALS
 	const [help, setHelp] = useState(false)
 	const [AIModal, setAIModal] = useState(false)
 	const [needToImportCollection, setNeedToImportCollection] = useState(false)
 	const [clearDeckModal, setClearDeck] = useState(false)
-    const [collection, setCollection] = useState<card[]>([])
+
+    //REFS
+	const collectionRef  = useRef<any>(null)
+	const deckRef  = useRef<any>(null)
     
     function downloadDeck(){
 
@@ -85,13 +87,15 @@ export default function Header({mainDeckCards,setSearch,cards,extraDeckCards,set
 				})
 
 				if(needToImportCollection){
-					let mainDeckSub = removeDeckFromCollection(arr, mainDeckCards)
-					arr = mainDeckSub
+					let collectionMinusMainDeck = removeDeckFromCollection(arr, mainDeckCards)
+                    let finalCollection = removeDeckFromCollection(collectionMinusMainDeck, extraDeckCards)
+					arr = finalCollection
 				}
 				
-				setCards(arr.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId))))
-				setCurrentCards(arr.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId))))
-                setCollection(arr.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId))))
+                let sortedArr = arr.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId)))
+				setCards(sortedArr)
+				setCurrentCards(sortedArr)
+                setCollection(sortedArr)
 				setNeedToImportCollection(false)
 			},
 		});

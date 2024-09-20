@@ -1,18 +1,19 @@
 import { card } from "../helpers/interfaces"
 import { getCardInfo } from "../helpers/functions"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import { cardsAtom, cardToInspectAtom, currentCardsAtom, isCardInspectingAtom, mainDeckCardsAtom, searchAtom } from "../helpers/atoms"
 
-interface mainDeckInterface{
-    mainDeckCards: card[],
-    setCardToInspect:Function, 
-    setIsCardInspecting:Function,
-    setMainDeckCards:Function,
-    setCards:Function,
-    setCurrentCards:Function,
-    cards:card[],
-    search:string
-}
 
-export default function MainDeck({mainDeckCards,setCardToInspect,setIsCardInspecting,setCards,setCurrentCards,setMainDeckCards,cards,search} :mainDeckInterface){
+
+export default function MainDeck(){
+
+    //ATOMS
+    const [cards, setCards] = useRecoilState(cardsAtom)
+    const [mainDeckCards, setMainDeckCards] = useRecoilState(mainDeckCardsAtom)
+    const setCurrentCards = useSetRecoilState(currentCardsAtom)
+    const search = useRecoilValue(searchAtom)
+    const setCardToInspect = useSetRecoilState(cardToInspectAtom)
+    const setIsCardInspecting = useSetRecoilState(isCardInspectingAtom)
     
     function removeCardFromMainDeck(card:card, e:any){
 		e.preventDefault()
@@ -24,8 +25,11 @@ export default function MainDeck({mainDeckCards,setCardToInspect,setIsCardInspec
 			return (each.cardIndexOnArray != card.cardIndexOnArray)
 		}))
 
-		setCards([card, ...cards].sort((a:card, b:card) => parseInt(String(a.cardIndexOnArray)) - parseInt(String(b.cardIndexOnArray))))
-		setCurrentCards([card, ...aux].sort((a:card, b:card) => parseInt(String(a.cardIndexOnArray)) - parseInt(String(b.cardIndexOnArray))))
+        let sortedCardsArr = [card, ...cards].sort((a:card, b:card) => parseInt(String(a.cardIndexOnArray)) - parseInt(String(b.cardIndexOnArray)))
+        let sortedCurrArr = [card, ...aux].sort((a:card, b:card) => parseInt(String(a.cardIndexOnArray)) - parseInt(String(b.cardIndexOnArray)))
+
+		setCards(sortedCardsArr)
+		setCurrentCards(sortedCurrArr)
 	}
 
     return(

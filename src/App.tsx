@@ -1,88 +1,46 @@
 
-import {  useState } from 'react'
 import './App.css'
 import * as Dialog from '@radix-ui/react-dialog';
 import './modal.css'
 import { Book, Shield,  Swords, X } from 'lucide-react';
 import Header from './Components/header';
-import { card, CardRoot } from './helpers/interfaces';
 import MainDeck from './Components/mainDeck';
 import ExtraDeck from './Components/extraDeck';
 import Collection from './Components/collection';
 import { ShootingStars } from './Components/ui/shootingStars';
 import { StarsBackground } from './Components/ui/starsBackground';
 import { ToastContainer } from 'react-toastify';
+import { useRecoilState } from 'recoil';
+import { cardToInspectAtom, isCardInspectingAtom } from './helpers/atoms';
 
 export default function App() {
-	const [cards, setCards] = useState<card[]>([])
-	const [mainDeckCards, setMainDeckCards] = useState<card[]>([])
-	const [extraDeckCards, setExtraDeckCards] = useState<card[]>([])
-	const [isCardInspecting, setIsCardInspecting] = useState(false)
-	const [cardToInspect, setCardToInspect] = useState<CardRoot | null>(null)
-	const [currentCards, setCurrentCards] = useState<card[]>(cards)
-	const [search, setSearch] = useState('')
 
+	//ATOMS
+	const [isCardInspecting, setIsCardInspecting] = useRecoilState(isCardInspectingAtom)
+	const [cardToInspect, setCardToInspect] = useRecoilState(cardToInspectAtom)
+	
 	return (
 		<>
 			<ShootingStars starWidth={20} starHeight={2} minDelay={3000} maxDelay={4200}/>
 			<StarsBackground starDensity={0.00130}/>
 			<ToastContainer  closeOnClick theme='dark' />
 			<div className='flex flex-col h-screen w-screen items-center overflow-hidden relative' >
-				<Header 
-					cards={cards} 
-					extraDeckCards={extraDeckCards} 
-					mainDeckCards={mainDeckCards} 
-					search={search} setCards={setCards} 
-					setCurrentCards={setCurrentCards} 
-					setExtraDeckCards={setExtraDeckCards} 
-					setMainDeckCards={setMainDeckCards} 
-					setSearch={setSearch}
-				/>
+				<Header/>
 
 				<div className='h-full w-full flex items-center justify-center gap-4 p-4 overflow-hidden'>
 					<div className='h-full w-[60%] border border-zinc-400 rounded-2xl gap-1 flex flex-col' > 
 						<div className='w-full h-[69%] rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0'>
-							<MainDeck 
-								cards={cards} 
-								mainDeckCards={mainDeckCards} 
-								search={search} 
-								setCardToInspect={setCardToInspect} 
-								setCards={setCards} 
-								setCurrentCards={setCurrentCards} 
-								setIsCardInspecting={setIsCardInspecting} 
-								setMainDeckCards={setMainDeckCards}
-							/>
+							<MainDeck/>
 						</div>
 
 						<div className='w-full h-[31%] rounded-bl-2xl rounded-br-2xl rounded-tl-0 rounded-tr-0'>
-							<ExtraDeck
-								cards={cards}
-								extraDeckCards={extraDeckCards}
-								search={search}
-								setCardToInspect={setCardToInspect}
-								setCards={setCards}
-								setCurrentCards={setCurrentCards}
-								setExtraDeckCards={setExtraDeckCards}
-								setIsCardInspecting={setIsCardInspecting}
-							/>
+							<ExtraDeck/>
 						</div>
 
 					</div>
 
 					<div className='h-full w-[40%] border border-zinc-400 rounded-2xl'>
-						<Collection
-							cards={cards}
-							currentCards={currentCards}
-							extraDeckCards={extraDeckCards}
-							mainDeckCards={mainDeckCards}
-							search={search}
-							setCardToInspect={setCardToInspect}
-							setCards={setCards}
-							setCurrentCards={setCurrentCards}
-							setExtraDeckCards={setExtraDeckCards}
-							setIsCardInspecting={setIsCardInspecting}
-							setMainDeckCards={setMainDeckCards}
-						/>
+						<Collection/>
 					</div>
 				</div>
 				

@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 .env
 .idx
+tsconfig.app.tsbuildinfo
+tsconfig.node.tsbuildinfo

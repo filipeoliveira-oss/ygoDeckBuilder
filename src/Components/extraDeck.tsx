@@ -1,18 +1,18 @@
 import { card } from "../helpers/interfaces"
 import { getCardInfo } from "../helpers/functions"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import { cardsAtom, cardToInspectAtom, currentCardsAtom, extraDeckCardsAtom, isCardInspectingAtom, searchAtom } from "../helpers/atoms"
 
-interface extraDeckInterface{
-    cards:card[],
-    search:string,
-    setExtraDeckCards:Function
-    extraDeckCards:card[],
-    setCards:Function,
-    setCurrentCards:Function,
-    setCardToInspect:Function, 
-    setIsCardInspecting:Function,
-}
 
-export default function ExtraDeck({cards,search,setExtraDeckCards,extraDeckCards,setCards,setCurrentCards,setCardToInspect,setIsCardInspecting} :extraDeckInterface){
+export default function ExtraDeck(){
+
+    //ATOMS
+    const [cards,setCards] = useRecoilState(cardsAtom)
+    const [extraDeckCards, setExtraDeckCards] = useRecoilState(extraDeckCardsAtom)
+    const search = useRecoilValue(searchAtom) 
+    const setCurrentCards = useSetRecoilState(currentCardsAtom)
+    const setCardToInspect = useSetRecoilState(cardToInspectAtom)
+    const setIsCardInspecting = useSetRecoilState(isCardInspectingAtom)
 
     function removeCardFromExtraDeck(card:card, e:any){
 		e.preventDefault()

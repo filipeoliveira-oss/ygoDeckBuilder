@@ -50,6 +50,7 @@ Done, you have your Dev Environment up and running.
 * [Radix-ui](https://www.radix-ui.com/primitives) - A component library
 * [papaparse](https://www.papaparse.com/) -  Powerful CSV Parser for JavaScript
 * [file-saver](https://github.com/eligrey/FileSaver.js#readme) - Solution to saving files on the client-side
+* [RecoilJS](https://recoiljs.org/) - A state management library for React
 
 ## Acknowledgments
 
