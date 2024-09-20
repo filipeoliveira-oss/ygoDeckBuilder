@@ -92,7 +92,7 @@ export default function Header(){
 					arr = finalCollection
 				}
 				
-                let sortedArr = arr.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId)))
+                let sortedArr = arr.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId)))                      
 				setCards(sortedArr)
 				setCurrentCards(sortedArr)
                 setCollection(sortedArr)
