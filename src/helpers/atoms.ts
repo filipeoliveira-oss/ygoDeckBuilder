@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { card, CardRoot } from "./interfaces";
+import { card, CardRoot, decks } from "./interfaces";
 
 export const cardsAtom = atom({
     key:'cards',
@@ -8,12 +8,12 @@ export const cardsAtom = atom({
 
 export const mainDeckCardsAtom = atom({
     key:'mainDeckCards',
-    default: [] as card[]
+    default: [] as decks[]
 })
 
 export const extraDeckCardsAtom = atom({
     key:'extraDeckCards',
-    default: [] as card[]
+    default: [] as decks[]
 })
 
 export const currentCardsAtom = atom({

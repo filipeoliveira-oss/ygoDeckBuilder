@@ -1,4 +1,4 @@
-import { card } from "../helpers/interfaces"
+import { decks } from "../helpers/interfaces"
 import { getCardInfo } from "../helpers/functions"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import { cardsAtom, cardToInspectAtom, currentCardsAtom, extraDeckCardsAtom, isCardInspectingAtom, searchAtom } from "../helpers/atoms"
@@ -14,18 +14,25 @@ export default function ExtraDeck(){
     const setCardToInspect = useSetRecoilState(cardToInspectAtom)
     const setIsCardInspecting = useSetRecoilState(isCardInspectingAtom)
 
-    function removeCardFromExtraDeck(card:card, e:any){
+    function removeCardFromExtraDeck(card:decks, e:any){
 		e.preventDefault()
-		let aux = cards.filter((each:card) =>{
-			return each.name.toLowerCase().includes(search)
-		})
-        
-		setExtraDeckCards(extraDeckCards.filter((each:card) =>{
+        let cardsArr = [...cards]
+        let index = cardsArr.findIndex((each:decks) => {return each.cardId == card.cardId})
+
+		setExtraDeckCards(extraDeckCards.filter((each:decks) =>{
 			return (each.cardIndexOnArray != card.cardIndexOnArray)
 		}))
 
-		setCards([card, ...cards].sort((a:card, b:card) => parseInt(String(a.cardIndexOnArray)) - parseInt(String(b.cardIndexOnArray))))
-		setCurrentCards([card, ...aux].sort((a:card, b:card) => parseInt(String(a.cardIndexOnArray)) - parseInt(String(b.cardIndexOnArray))))
+        if(index !== -1){
+            let currQuantity = parseInt(String(cardsArr[index].quantity))
+            cardsArr[index] = {...cardsArr[index], quantity: currQuantity + 1}
+        }
+
+        let sortedCardsArr = cardsArr.sort((a:decks, b:decks) => parseInt(String(a.cardIndexOnArray)) - parseInt(String(b.cardIndexOnArray)))
+        let sortedCurrArr = cardsArr.filter((each:decks) =>{return each.name.toLowerCase().includes(search.toLowerCase())}).sort((a:decks, b:decks) => parseInt(String(a.cardIndexOnArray)) - parseInt(String(b.cardIndexOnArray)))
+
+		setCards(sortedCardsArr)
+		setCurrentCards(sortedCurrArr)
 	}
 
     return(
@@ -35,9 +42,11 @@ export default function ExtraDeck(){
                 <span className="font-semibold text-base">{extraDeckCards.length} </span>
             </div>
             <div className={`h-full bg-transparent w-full grid grid-cols-cards gap-4 overflow-auto px-4 pt-2 pb-4`}>
-                {extraDeckCards.map((each:card) =>{
+                {extraDeckCards.map((each:decks) =>{
                     return(
-                        <div key={each.cardIndexOnArray} className="w-40 h-56 cursor-pointer" onClick={() => getCardInfo(each.cardId.toString(), setCardToInspect, setIsCardInspecting)} onContextMenu={(e) => removeCardFromExtraDeck(each, e)}>
+                        <div key={each.cardIndexOnArray} className="w-40 h-56 cursor-pointer" 
+                            onClick={() => getCardInfo(each.cardId.toString(), setCardToInspect, setIsCardInspecting)} 
+                            onContextMenu={(e) => removeCardFromExtraDeck(each, e)}>
                             <img src={each.img} alt={each.cardId.toString()}/>
                         </div>
                     )

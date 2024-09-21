@@ -1,5 +1,5 @@
 import { Search, X } from "lucide-react";
-import { card, csvCollection } from "../helpers/interfaces";
+import { card, csvCollection, decks } from "../helpers/interfaces";
 import { useRef, useState } from "react";
 import * as Dialog from '@radix-ui/react-dialog';
 import { saveAs } from 'file-saver';
@@ -36,13 +36,13 @@ export default function Header(){
 
 		let deck = '#main \n'
 
-		mainDeckCards.map((each:card) =>{
+		mainDeckCards.map((each:decks) =>{
 			deck = deck + each.cardId + '\n'
 		})
 
 		deck = deck + '\n #extra \n'
 
-		extraDeckCards.map((each:card) =>{
+		extraDeckCards.map((each:decks) =>{
 			deck = deck + each.cardId + '\n'
 		})
 
@@ -54,15 +54,15 @@ export default function Header(){
 		saveAs(blob, 'ygodeck.ydk', )
 	}
 
-    function removeDeckFromCollection(collection:card[], deck:card[]){
+    function removeDeckFromCollection(collection:card[], deck:decks[]){
 		deck.map(deckItem => {
-		  // Find index of the first matching item in the collection
+		  
 		  const index = collection.findIndex(
 			collectionItem => String(collectionItem.cardId) === String(deckItem.cardId)
 		  );
-		  // If a match is found, remove it from the collection
+		  
 		  if (index !== -1) {
-			collection.splice(index, 1);
+            collection[index] = {...collection[index], quantity: parseInt(String(collection[index].quantity)) - 1}
 		  }
 		});
 
@@ -76,17 +76,26 @@ export default function Header(){
 			complete: function (results:any) {
 				let arr:card[] = []
                 let data:csvCollection[] = results.data
-				data.map((each:any)=>{
-					for(let i = 0; i < each.cardq; i++){
-						arr.push({
-							cardId: each.cardid,
-							img: `https://images.ygoprodeck.com/images/cards_small/${each.cardid}.jpg`,
-							cardIndexOnArray: each.cardid +`_${each.card_edition}` +`_${i}`,
-							name:each.cardname
-						})
-					}
+				data.map((each:csvCollection)=>{
+                    let index = arr.findIndex((arrCard:card) =>{
+                        return arrCard.cardId == each.cardid
+                    })
+
+                    
+                    if(index !== -1){
+                        arr[index] = {...arr[index], quantity: parseInt(String(arr[index].quantity)) + parseInt(String(each.cardq))}
+                    }else{
+                        arr.push({
+                            cardId: each.cardid,
+					 		img: `https://images.ygoprodeck.com/images/cards_small/${each.cardid}.jpg`,
+					 		cardIndexOnArray: String(each.cardid),
+					 		name:each.cardname,
+                            quantity:each.cardq
+                        })
+                    }
 				})
 
+                
 				if(needToImportCollection){
 					let collectionMinusMainDeck = removeDeckFromCollection(arr, mainDeckCards)
                     let finalCollection = removeDeckFromCollection(collectionMinusMainDeck, extraDeckCards)
@@ -118,38 +127,44 @@ export default function Header(){
 			let mainDeck = arrDeck.slice(1, extraIndex)
 			let extraDeck = arrDeck.slice(extraIndex + 1, sideIndex)
 
-			let auxMainDeck:card[] = []
-			let auxExtraDeck:card[] = []
+			let auxMainDeck:decks[] = []
+			let auxExtraDeck:decks[] = []
 
-			mainDeck.map(async (each:string) =>{
-				let random = Math.random()
-				
-				await axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${each}`).then((res) =>{
-					auxMainDeck.push({
-						cardId: res.data.data[0].id,
-						img: res.data.data[0].card_images[0].image_url_small, 
-						cardIndexOnArray:res.data.data[0].id +`_common` +`_1` + random,
-						name:res.data.data[0].name
-					})
-				})
+			await Promise.all(
+                mainDeck.map(async (each:string) =>{
+                    let random = Math.random()
+                    
+                    await axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${each}`).then((res) =>{
+                        auxMainDeck.push({
+                            cardId: res.data.data[0].id,
+                            img: res.data.data[0].card_images[0].image_url_small, 
+                            cardIndexOnArray:res.data.data[0].id +`_` + random,
+                            name:res.data.data[0].name
+                        })
+                    })
+                })
+            )
 
-			})
+			await Promise.all(
+                extraDeck.map(async (each:string) =>{
+                    let random = Math.random()
+    
+                    await axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${each}`).then((res) =>{
+                        auxExtraDeck.push({
+                            cardId: res.data.data[0].id,
+                            img: res.data.data[0].card_images[0].image_url_small, 
+                            cardIndexOnArray:res.data.data[0].id +`_` + random,
+                            name:res.data.data[0].name
+                        })
+                    })
+                })
+            )
+            
 
-			extraDeck.map(async (each:string) =>{
-				let random = Math.random()
-
-				await axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${each}`).then((res) =>{
-					auxExtraDeck.push({
-						cardId: res.data.data[0].id,
-						img: res.data.data[0].card_images[0].image_url_small, 
-						cardIndexOnArray:res.data.data[0].id +`_common` +`_1` + random,
-						name:res.data.data[0].name
-					})
-				})
-			})
-
-			setMainDeckCards(auxMainDeck.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId))))
-			setExtraDeckCards(auxExtraDeck.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId))))
+            let mainDeckSorted = auxMainDeck.sort((a:decks, b:decks) => parseInt(String(a.cardId)) - parseInt(String(b.cardId)))
+            let extraDeckSorted = auxExtraDeck.sort((a:decks, b:decks) => parseInt(String(a.cardId)) - parseInt(String(b.cardId)))
+			setMainDeckCards(mainDeckSorted)
+			setExtraDeckCards(extraDeckSorted)
 			setNeedToImportCollection(true)
 		}
 

@@ -2,7 +2,17 @@ export interface card {
     cardId: string | number,
     img: string, 
 	cardIndexOnArray:string,
-	name:string
+	name:string,
+	quantity:number
+}
+
+export interface decks {
+    cardId: string | number,
+    img: string, 
+	cardIndexOnArray:string,
+	name:string,
+	quantity?:number
+
 }
 
 export interface CardRoot {

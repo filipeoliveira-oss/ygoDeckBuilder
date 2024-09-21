@@ -1,5 +1,5 @@
 import { getCardInfo } from "../helpers/functions"
-import { card } from "../helpers/interfaces"
+import { card, decks } from "../helpers/interfaces"
 import axios from 'axios'
 import { CardBody, CardContainer, CardItem } from "./ui/3dCard"
 import {  toast } from 'react-toastify';
@@ -23,36 +23,45 @@ export default function Collection(){
 		e.preventDefault()
 		let extraDeckTypes = ["Fusion Monster","Link Monster","Pendulum Effect Fusion Monster","Synchro Monster","Synchro Pendulum Effect Monster","Synchro Tuner Monster","XYZ Monster","XYZ Pendulum Effect Monster"]
 		let fullDeck = mainDeckCards.concat(extraDeckCards)
-		let quantityInDeck = fullDeck.filter((each:card) =>{
+
+		let quantityInDeck = fullDeck.filter((each:decks) =>{
 			return each.cardId == card.cardId
 		})
 
 		if(quantityInDeck.length >= 3){
 			toast.error(`Você atingiu o limite máximo da carta: ${card.name}`)
-
 			return
 		}
 
 		axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${card.cardId}`).then((res) =>{
 			let type = res.data.data[0].type
-			if(extraDeckTypes.some((each:string) =>{return each === type})){
-				setExtraDeckCards([...extraDeckCards,card])
-				setCards(cards.filter((each:card) =>{
-					return (each.cardIndexOnArray != card.cardIndexOnArray)
-				}))
-				setCurrentCards(cards.filter((each:card) =>{
-					return (each.cardIndexOnArray != card.cardIndexOnArray) && each.name.toLowerCase().includes(search.toLowerCase())
-				}))
+			let collectionArray = [...cards]
+			let index = collectionArray.findIndex((each:card) =>{
+				return each.cardId == card.cardId
+			})
+
+			let currentQuantity = collectionArray[index].quantity
+			if(index !== -1 && collectionArray[index].quantity > 0){
+				collectionArray[index] = {...collectionArray[index], quantity: parseInt(String(currentQuantity)) - 1 }
+			}
+			
+			if(index === -1){
+				toast.error('Ocorreu um erro no servidor, tente novamente')
+				return
+			}
+
+			if(extraDeckTypes.some((extraType:string) =>{return extraType === type})){
+				let auxCard = {...card, cardIndexOnArray: String(Math.random())}
+				setExtraDeckCards([...extraDeckCards,auxCard])
 			}
 			else{
-				setMainDeckCards([...mainDeckCards,card])
-				setCards(cards.filter((each:card) =>{
-					return (each.cardIndexOnArray != card.cardIndexOnArray)
-				}))
-				setCurrentCards(cards.filter((each:card) =>{
-					return (each.cardIndexOnArray != card.cardIndexOnArray) && each.name.toLowerCase().includes(search.toLowerCase())
-				}))
+				let auxCard = {...card, cardIndexOnArray: String(Math.random())}
+				setMainDeckCards([...mainDeckCards,auxCard])
 			}
+
+			let collectionArraySorted = collectionArray.filter((each:card) =>{return each.name.toLowerCase().includes(search.toLowerCase())})
+			setCards(collectionArray)
+			setCurrentCards(collectionArraySorted)
 		})
 	}
 
@@ -61,13 +70,18 @@ export default function Collection(){
             <div className='flex w-full h-8 items-center gap-4 deckHeader rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0'>
                 <h1 className='font-semibold text-base tracking-tight leading-normal ml-4'>Collection</h1>
             </div>
-            <div className='flex-1 flex-col overflow-x-auto grid grid-cols-cards gap-4 pb-4 h-full items-center justify-center rounded-2xl pt-2'>
-				{currentCards.map((card:card)=>{
+            <div className='flex-1 flex-col overflow-x-auto grid grid-cols-cards gap-4 pb-4 h-full rounded-2xl pt-2 px-4'>
+				{currentCards.filter((each:card) =>{ return each.quantity >0 }).map((card:card)=>{
 					return(
-						<CardContainer key={card.cardIndexOnArray}>
+						<CardContainer key={card.cardIndexOnArray} >
 							<CardBody key={card.cardIndexOnArray} className=" w-40 h-56 cursor-pointer" >
 								<CardItem translateZ="90" onClick={()=> getCardInfo(card.cardId.toString(), setCardToInspect, setIsCardInspecting)} onContextMenuCapture={(e:any)=> sendCardToDeck(card, e)}>
-									<img src={card.img} alt={card.cardId.toString()}/>
+									<div className="relative">
+										<div className="absolute top-0 right-2 w-6 h-8 bg-[#7D3E12] cardQtdCounter text-center">
+											{card.quantity}
+										</div>
+										<img src={card.img} alt={card.cardId.toString()}/>
+									</div>
 								</CardItem>
 							</CardBody>
 						</CardContainer>

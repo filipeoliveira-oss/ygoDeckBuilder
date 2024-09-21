@@ -29,5 +29,10 @@
     background: rgba(139, 92, 246,0.4);
     box-shadow: 0 4px 30px rgba(139, 92, 246,0.4);
     -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
     border: 1px solid rgba(139, 92, 246,0.5);
+}
+
+.cardQtdCounter{
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 70%, 0 100%);
 }
