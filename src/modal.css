@@ -62,12 +62,6 @@ input {
   top: 10px;
   right: 10px;
 }
-.IconButton:hover {
-  background-color: var(--violet-4);
-}
-.IconButton:focus {
-  box-shadow: 0 0 0 2px var(--violet-7);
-}
 
 .Fieldset {
   display: flex;

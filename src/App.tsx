@@ -122,7 +122,7 @@ export default function App() {
 
 						<Dialog.Close asChild>
 							<button className="IconButton" aria-label="Close" onClick={() => {setIsCardInspecting(false), setCardToInspect(null)}}>
-							<X/>
+								<X/>
 							</button>
 						</Dialog.Close>
 						</Dialog.Content>
