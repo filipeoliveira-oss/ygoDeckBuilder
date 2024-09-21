@@ -43,7 +43,7 @@ Done, you have your Dev Environment up and running.
 ## Built With
 
 * [React](https://react.dev/) - The library for web and native user interfaces
-* [TypeScript](https://www.typescriptlang.org/) - Strongly typed programming language that builds on JavaScrip
+* [TypeScript](https://www.typescriptlang.org/) - Strongly typed programming language that builds on JavaScript
 * [YGOProdeck](https://ygoprodeck.com/) - A Yu Gi Oh Community
 * [Axios](https://axios-http.com/) - Promise based HTTP client for the browser and node.js
 * [Framer Motion](https://www.framer.com/motion/) - Framer Motion animation library
