@@ -1,7 +1,7 @@
 import { card, decks } from "../helpers/interfaces"
 import { getCardInfo } from "../helpers/functions"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import { cardsAtom, cardToInspectAtom, currentCardsAtom, isCardInspectingAtom, mainDeckCardsAtom, searchAtom } from "../helpers/atoms"
+import { cardsAtom, cardToInspectAtom, currentCardsAtom, isCardInspectingAtom, mainDeckCardsAtom, screenLoaderAtom, searchAtom } from "../helpers/atoms"
 
 export default function MainDeck(){
 
@@ -12,6 +12,7 @@ export default function MainDeck(){
     const search = useRecoilValue(searchAtom)
     const setCardToInspect = useSetRecoilState(cardToInspectAtom)
     const setIsCardInspecting = useSetRecoilState(isCardInspectingAtom)
+	const setLoadingScreen = useSetRecoilState(screenLoaderAtom) 
 
     function removeCardFromMainDeck(card:decks, e:any){
 		e.preventDefault()
@@ -34,6 +35,21 @@ export default function MainDeck(){
 		setCurrentCards(sortedCurrArr)
 	}
 
+    async function inspectCard(card:decks){
+		const loadingTimeoutPromise = setTimeout((resolve) => {
+			setLoadingScreen(true)
+			resolve()
+		}, 1000);
+
+		const promise = getCardInfo(card.cardId.toString(), setCardToInspect, setIsCardInspecting)
+
+		await Promise.race([loadingTimeoutPromise, promise])
+
+		await promise
+
+		clearTimeout(loadingTimeoutPromise)
+		setLoadingScreen(false)
+	}
 
     return(
         <div className={`flex h-full flex-col gap-2 rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0`} >
@@ -42,12 +58,12 @@ export default function MainDeck(){
                 <span className="font-semibold text-base">{mainDeckCards.length} </span>
             </div>
             <div className={`h-full bg-transparent w-full grid grid-cols-cards gap-4 overflow-auto px-4 pb-4`}>
-                {mainDeckCards.map((each:decks) =>{
+                {mainDeckCards.map((card:decks) =>{
                     return(
-                        <div key={each.cardIndexOnArray} className=" w-40 h-56 cursor-pointer"
-                            onClick={() => getCardInfo(each.cardId.toString(),setCardToInspect, setIsCardInspecting)} 
-                            onContextMenu={(e) => removeCardFromMainDeck(each, e)}>
-                            <img src={each.img} alt={each.cardId.toString()}/>
+                        <div key={card.cardIndexOnArray} className=" w-40 h-56 cursor-pointer"
+                            onClick={() => inspectCard(card)} 
+                            onContextMenu={(e) => removeCardFromMainDeck(card, e)}>
+                            <img src={card.img} alt={card.cardId.toString()}/>
                         </div>
                     )
                 })}

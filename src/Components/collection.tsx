@@ -4,7 +4,7 @@ import axios from 'axios'
 import { CardBody, CardContainer, CardItem } from "./ui/3dCard"
 import {  toast } from 'react-toastify';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { cardsAtom, cardToInspectAtom, currentCardsAtom, extraDeckCardsAtom, isCardInspectingAtom, mainDeckCardsAtom, searchAtom } from "../helpers/atoms";
+import { cardsAtom, cardToInspectAtom, currentCardsAtom, extraDeckCardsAtom, isCardInspectingAtom, mainDeckCardsAtom, screenLoaderAtom, searchAtom } from "../helpers/atoms";
 
 
 export default function Collection(){
@@ -17,9 +17,9 @@ export default function Collection(){
 	const search = useRecoilValue(searchAtom)
 	const setCardToInspect = useSetRecoilState(cardToInspectAtom)
     const setIsCardInspecting = useSetRecoilState(isCardInspectingAtom)
+	const setLoadingScreen = useSetRecoilState(screenLoaderAtom) 
 
-
-    function sendCardToDeck(card:card, e:any){
+    async function sendCardToDeck(card:card, e:any){
 		e.preventDefault()
 		let extraDeckTypes = ["Fusion Monster","Link Monster","Pendulum Effect Fusion Monster","Synchro Monster","Synchro Pendulum Effect Monster","Synchro Tuner Monster","XYZ Monster","XYZ Pendulum Effect Monster"]
 		let fullDeck = mainDeckCards.concat(extraDeckCards)
@@ -33,7 +33,9 @@ export default function Collection(){
 			return
 		}
 
-		axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${card.cardId}`).then((res) =>{
+
+
+		const promise = axios.get(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${card.cardId}`).then((res) =>{
 			let type = res.data.data[0].type
 			let collectionArray = [...cards]
 			let index = collectionArray.findIndex((each:card) =>{
@@ -63,6 +65,36 @@ export default function Collection(){
 			setCards(collectionArray)
 			setCurrentCards(collectionArraySorted)
 		})
+
+		const loadingTimeoutPromise = setTimeout((resolve) => {
+			setLoadingScreen(true)
+			resolve()
+		}, 1000);
+
+		await Promise.race([loadingTimeoutPromise, promise])
+
+		await promise
+
+		clearTimeout(loadingTimeoutPromise)
+		setLoadingScreen(false)
+
+	}
+
+	async function inspectCard(card:card){
+
+		const loadingTimeoutPromise = setTimeout((resolve) => {
+			setLoadingScreen(true)
+			resolve()
+		}, 1000);
+
+		const promise = getCardInfo(card.cardId.toString(), setCardToInspect, setIsCardInspecting)
+
+		await Promise.race([loadingTimeoutPromise, promise])
+
+		await promise
+
+		clearTimeout(loadingTimeoutPromise)
+		setLoadingScreen(false)
 	}
 
     return(
@@ -75,7 +107,7 @@ export default function Collection(){
 					return(
 						<CardContainer key={card.cardIndexOnArray} >
 							<CardBody key={card.cardIndexOnArray} className=" w-40 h-56 cursor-pointer" >
-								<CardItem translateZ="90" onClick={()=> getCardInfo(card.cardId.toString(), setCardToInspect, setIsCardInspecting)} onContextMenuCapture={(e:any)=> sendCardToDeck(card, e)}>
+								<CardItem translateZ="90" onClick={()=>inspectCard(card)} onContextMenuCapture={(e:any)=> sendCardToDeck(card, e)}>
 									<div className="relative">
 										<div className="absolute top-0 right-2 w-6 h-8 bg-[#7D3E12] cardQtdCounter text-center">
 											{card.quantity}

@@ -10,19 +10,22 @@ import Collection from './Components/collection';
 import { ShootingStars } from './Components/ui/shootingStars';
 import { StarsBackground } from './Components/ui/starsBackground';
 import { ToastContainer } from 'react-toastify';
-import { useRecoilState } from 'recoil';
-import { cardToInspectAtom, isCardInspectingAtom } from './helpers/atoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { cardToInspectAtom, isCardInspectingAtom, screenLoaderAtom } from './helpers/atoms';
+import ScreenLoader from './Components/ui/screenLoader';
 
 export default function App() {
 
 	//ATOMS
 	const [isCardInspecting, setIsCardInspecting] = useRecoilState(isCardInspectingAtom)
 	const [cardToInspect, setCardToInspect] = useRecoilState(cardToInspectAtom)
-	
+	const screenLoader = useRecoilValue(screenLoaderAtom)
+
 	return (
 		<>
 			<ShootingStars starWidth={20} starHeight={2} minDelay={3000} maxDelay={4200}/>
 			<StarsBackground starDensity={0.00130}/>
+			{screenLoader && <ScreenLoader/>}
 			<ToastContainer  closeOnClick theme='dark' />
 			<div className='flex flex-col h-screen w-screen items-center overflow-hidden relative' >
 				<Header/>
@@ -43,8 +46,9 @@ export default function App() {
 						<Collection/>
 					</div>
 				</div>
-				
-				<Dialog.Root open={isCardInspecting}>
+			</div>
+
+			<Dialog.Root open={isCardInspecting}>
 					<Dialog.Portal>
 						<Dialog.Overlay className="DialogOverlay " />
 						<Dialog.Content className="DialogContent bg-zinc-950 text-white border-2 border-violet-500">
@@ -123,9 +127,7 @@ export default function App() {
 						</Dialog.Close>
 						</Dialog.Content>
 					</Dialog.Portal>
-				</Dialog.Root>
-
-			</div>
+			</Dialog.Root>
 		</>
 	)
 }

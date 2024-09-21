@@ -35,3 +35,8 @@ export const cardToInspectAtom = atom({
     key:'cardToInspect',
     default: null as CardRoot | null
 })
+
+export const screenLoaderAtom = atom({
+    key:'screenLoader',
+    default: false as boolean
+})

@@ -1,7 +1,7 @@
 import { decks } from "../helpers/interfaces"
 import { getCardInfo } from "../helpers/functions"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
-import { cardsAtom, cardToInspectAtom, currentCardsAtom, extraDeckCardsAtom, isCardInspectingAtom, searchAtom } from "../helpers/atoms"
+import { cardsAtom, cardToInspectAtom, currentCardsAtom, extraDeckCardsAtom, isCardInspectingAtom, screenLoaderAtom, searchAtom } from "../helpers/atoms"
 
 
 export default function ExtraDeck(){
@@ -13,6 +13,7 @@ export default function ExtraDeck(){
     const setCurrentCards = useSetRecoilState(currentCardsAtom)
     const setCardToInspect = useSetRecoilState(cardToInspectAtom)
     const setIsCardInspecting = useSetRecoilState(isCardInspectingAtom)
+	const setLoadingScreen = useSetRecoilState(screenLoaderAtom) 
 
     function removeCardFromExtraDeck(card:decks, e:any){
 		e.preventDefault()
@@ -35,6 +36,22 @@ export default function ExtraDeck(){
 		setCurrentCards(sortedCurrArr)
 	}
 
+    async function inspectCard(card:decks){
+		const loadingTimeoutPromise = setTimeout((resolve) => {
+			setLoadingScreen(true)
+			resolve()
+		}, 1000);
+
+		const promise = getCardInfo(card.cardId.toString(), setCardToInspect, setIsCardInspecting)
+
+		await Promise.race([loadingTimeoutPromise, promise])
+
+		await promise
+
+		clearTimeout(loadingTimeoutPromise)
+		setLoadingScreen(false)
+	}
+
     return(
         <div className={`flex h-full flex-col`}>
             <div className='flex w-full h-8 items-center gap-4 deckHeader '>
@@ -42,12 +59,12 @@ export default function ExtraDeck(){
                 <span className="font-semibold text-base">{extraDeckCards.length} </span>
             </div>
             <div className={`h-full bg-transparent w-full grid grid-cols-cards gap-4 overflow-auto px-4 pt-2 pb-4`}>
-                {extraDeckCards.map((each:decks) =>{
+                {extraDeckCards.map((card:decks) =>{
                     return(
-                        <div key={each.cardIndexOnArray} className="w-40 h-56 cursor-pointer" 
-                            onClick={() => getCardInfo(each.cardId.toString(), setCardToInspect, setIsCardInspecting)} 
-                            onContextMenu={(e) => removeCardFromExtraDeck(each, e)}>
-                            <img src={each.img} alt={each.cardId.toString()}/>
+                        <div key={card.cardIndexOnArray} className="w-40 h-56 cursor-pointer" 
+                            onClick={() => inspectCard(card)} 
+                            onContextMenu={(e) => removeCardFromExtraDeck(card, e)}>
+                            <img src={card.img} alt={card.cardId.toString()}/>
                         </div>
                     )
                 })}
