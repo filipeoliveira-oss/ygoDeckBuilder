@@ -202,17 +202,11 @@ export default function Header(){
     function generateAIText(){
 		
 		let baseText = 'I need you to imagine that your a yu gi oh pro player and you know all the best tactics to win every single oponent and I need you to think clearly to answer my questions.\nI will send a list containing their name and quantity of the card I have available for this deck. I need you to give the best possible deck within 40 to 50 cards and give a reasonable reason for your choices, What are the mechanics and how would you play.\n\n'
-		let collectionMap = new Map()
 		let collectionString = ''
 
-		cards.map((each:card) =>{
-			let currentqtd = collectionMap.get(each.name) || 0
-			collectionMap.set(each.name, currentqtd + 1)
-		})
-
-		for(let [key,value] of collectionMap){
-			collectionString+= `${key}: ${value}\n`
-		}
+        cards.map((each:card) =>{
+            collectionString+= `${each.name}: ${each.quantity}\n`
+        })
 
 		let FinalText = baseText + collectionString
 
@@ -281,8 +275,8 @@ export default function Header(){
 
 
 
-                <div className='w-full h-fit min-h-8 flex justify-end gap-4'>
-                    <Button aria-label="Close" onClick={() => {handleAI(), setAIModal(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
+                <div className='w-full h-fit min-h-8 flex justify-end gap-4 '>
+                    <Button aria-label="Close" onClick={() => {handleAI(), setAIModal(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1 min-w-12'>
                         OK
                     </Button>
                 </div>
