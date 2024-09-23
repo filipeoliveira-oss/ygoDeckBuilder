@@ -118,14 +118,21 @@ export default function Header(){
 
 		reader.onload = async (e) =>{
 			const deck = e.target?.result
-			let arrDeck = String(deck).split('\n').filter((str) =>{
+			let arrDeck = String(deck).split(/\r\n?|\n/).filter((str) =>{
 				return /\S/.test(str);
 			})
-			let extraIndex = arrDeck.indexOf(" #extra ")
-			let sideIndex = arrDeck.indexOf(" !side ")
 
-			let mainDeck = arrDeck.slice(1, extraIndex)
-			let extraDeck = arrDeck.slice(extraIndex + 1, sideIndex)
+            let removedWhiteSpaces = arrDeck.map((each:string) =>{
+                return each.replace(/ /g, '')
+            })
+            
+
+            console.log(removedWhiteSpaces)
+			let extraIndex = removedWhiteSpaces.indexOf("#extra")
+			let sideIndex = removedWhiteSpaces.indexOf("!side")
+
+			let mainDeck = removedWhiteSpaces.slice(1, extraIndex)
+			let extraDeck = removedWhiteSpaces.slice(extraIndex + 1, sideIndex)
 
 			let auxMainDeck:decks[] = []
 			let auxExtraDeck:decks[] = []
@@ -352,7 +359,7 @@ export default function Header(){
                     </div>
 
                     <Dialog.Close asChild>
-                        <button className="IconButton" aria-label="Close" onClick={() => {alert('Boa tentativa, importa a porra da coleção!!!')}}>
+                        <button className="IconButton" aria-label="Close" onClick={() => {alert('Você precisa importar uma coleção!!!')}}>
                         <X/>
                         </button>
                     </Dialog.Close>
