@@ -58,7 +58,7 @@ export default function ExtraDeck(){
                 <h1 className='font-semibold text-base tracking-tight leading-normal ml-4'>Extra Deck</h1>
                 <span className="font-semibold text-base">{extraDeckCards.length} </span>
             </div>
-            <div className={`h-full bg-transparent w-full grid grid-cols-cards gap-4 overflow-auto px-4 pt-2 pb-4`}>
+            <div className={`h-full bg-transparent w-full grid grid-cols-cards gap-4 overflow-auto px-4 pt-2 pb-4 select-none`}>
                 {extraDeckCards.map((card:decks) =>{
                     return(
                         <div key={card.cardIndexOnArray} className="w-40 h-56 cursor-pointer" 

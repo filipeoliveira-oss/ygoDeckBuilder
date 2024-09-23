@@ -57,7 +57,7 @@ export default function MainDeck(){
                 <h1 className='font-semibold text-base tracking-tight leading-normal ml-4'>Main Deck</h1>
                 <span className="font-semibold text-base">{mainDeckCards.length} </span>
             </div>
-            <div className={`h-full bg-transparent w-full grid grid-cols-cards gap-4 overflow-auto px-4 pb-4`}>
+            <div className={`h-full bg-transparent w-full grid grid-cols-cards gap-4 overflow-auto px-4 pb-4 select-none`}>
                 {mainDeckCards.map((card:decks) =>{
                     return(
                         <div key={card.cardIndexOnArray} className=" w-40 h-56 cursor-pointer"

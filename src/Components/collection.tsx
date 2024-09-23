@@ -102,7 +102,7 @@ export default function Collection(){
             <div className='flex w-full h-8 items-center gap-4 deckHeader rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0'>
                 <h1 className='font-semibold text-base tracking-tight leading-normal ml-4'>Collection</h1>
             </div>
-            <div className='flex-1 flex-col overflow-x-auto grid grid-cols-cards gap-4 pb-4 h-full rounded-2xl pt-2 px-4'>
+            <div className='flex-1 flex-col overflow-x-auto grid grid-cols-cards gap-4 pb-4 h-full rounded-2xl pt-2 px-4 select-none'>
 				{currentCards.filter((each:card) =>{ return each.quantity >0 }).map((card:card)=>{
 					return(
 						<CardContainer key={card.cardIndexOnArray} >
