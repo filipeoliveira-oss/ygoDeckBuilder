@@ -283,7 +283,7 @@ export default function Header(){
 
                 <div className='w-full h-fit min-h-8 flex justify-end gap-4'>
                     <Button aria-label="Close" onClick={() => {handleAI(), setAIModal(false)}} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
-                        Estou pronto
+                        OK
                     </Button>
                 </div>
 
