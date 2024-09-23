@@ -127,7 +127,6 @@ export default function Header(){
             })
             
 
-            console.log(removedWhiteSpaces)
 			let extraIndex = removedWhiteSpaces.indexOf("#extra")
 			let sideIndex = removedWhiteSpaces.indexOf("!side")
 
