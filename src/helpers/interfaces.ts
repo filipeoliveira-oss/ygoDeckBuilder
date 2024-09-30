@@ -3,7 +3,9 @@ export interface card {
     img: string, 
 	cardIndexOnArray:string,
 	name:string,
-	quantity:number
+	quantity:number,
+	set:string,
+	rarity:string
 }
 
 export interface decks {
@@ -12,7 +14,8 @@ export interface decks {
 	cardIndexOnArray:string,
 	name:string,
 	quantity?:number
-
+	set:string,
+	rarity:string
 }
 
 export interface CardRoot {

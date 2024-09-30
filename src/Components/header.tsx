@@ -10,6 +10,7 @@ import { Action } from "./ui/headerAction";
 import logo from '/logo.png'
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { cardsAtom, currentCardsAtom, extraDeckCardsAtom, mainDeckCardsAtom, searchAtom } from "../helpers/atoms";
+import FilterDropDown from "./ui/dropdownMenu";
 
 export default function Header(){
     
@@ -31,7 +32,11 @@ export default function Header(){
     //REFS
 	const collectionRef  = useRef<any>(null)
 	const deckRef  = useRef<any>(null)
-    
+
+    //FILTER
+    const [availableCollections, setAvailableCollections] = useState<Array<string>>([])
+    const [availableRarity, setAvailableRarity] = useState<Array<string>>([])
+
     function downloadDeck(){
 
 		let deck = '#main \n'
@@ -76,22 +81,38 @@ export default function Header(){
 			complete: function (results:any) {
 				let arr:card[] = []
                 let data:csvCollection[] = results.data
+                let collectionMap = new Map()
+                let rarityMap = new Map()
 				data.map((each:csvCollection)=>{
                     let index = arr.findIndex((arrCard:card) =>{
                         return arrCard.cardId == each.cardid
                     })
 
-                    
+                    //exist in arr
                     if(index !== -1){
                         arr[index] = {...arr[index], quantity: parseInt(String(arr[index].quantity)) + parseInt(String(each.cardq))}
+
+                    // does not exists in arr
                     }else{
                         arr.push({
                             cardId: each.cardid,
 					 		img: `https://images.ygoprodeck.com/images/cards_small/${each.cardid}.jpg`,
 					 		cardIndexOnArray: String(each.cardid),
 					 		name:each.cardname,
-                            quantity:each.cardq
+                            quantity:each.cardq,
+                            set:each.cardset,
+                            rarity:each.cardrarity
                         })
+                    }
+
+                    //populate collections available
+
+                    if(!collectionMap.has(each.cardset)){
+                        collectionMap.set(each.cardset, 1)
+                    }
+
+                    if(!rarityMap.has(each.cardrarity)){
+                        rarityMap.set(each.cardrarity, 1)
                     }
 				})
 
@@ -102,11 +123,16 @@ export default function Header(){
 					arr = finalCollection
 				}
 				
-                let sortedArr = arr.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId)))                      
+                let sortedArr = arr.sort((a:card, b:card) => parseInt(String(a.cardId)) - parseInt(String(b.cardId)))  
+                let mapToArrSet = Array.from(collectionMap.keys())                    
+                let mapToArrRariry = Array.from(rarityMap.keys())    
+
 				setCards(sortedArr)
 				setCurrentCards(sortedArr)
                 setCollection(sortedArr)
 				setNeedToImportCollection(false)
+                setAvailableCollections(mapToArrSet)
+                setAvailableRarity(mapToArrRariry)
 			},
 		});
 
@@ -145,7 +171,9 @@ export default function Header(){
                             cardId: res.data.data[0].id,
                             img: res.data.data[0].card_images[0].image_url_small, 
                             cardIndexOnArray:res.data.data[0].id +`_` + random,
-                            name:res.data.data[0].name
+                            name:res.data.data[0].name,
+                            set:res.data.data[0].card_sets[0].set_name,
+                            rarity:res.data.data[0].card_sets[0].set_rarity
                         })
                     })
                 })
@@ -160,7 +188,9 @@ export default function Header(){
                             cardId: res.data.data[0].id,
                             img: res.data.data[0].card_images[0].image_url_small, 
                             cardIndexOnArray:res.data.data[0].id +`_` + random,
-                            name:res.data.data[0].name
+                            name:res.data.data[0].name,
+                            set:res.data.data[0].card_sets[0].set_name,
+                            rarity:res.data.data[0].card_sets[0].set_rarity
                         })
                     })
                 })
@@ -241,13 +271,13 @@ export default function Header(){
 
     return(
         <>
-            <div className="flex justify-between px-4 w-full h-12 items-center">
+            <div className="flex justify-between px-4 w-full h-12 items-center relative">
 
                 <div>
                     <img src={logo} alt="Logo" className="w-12 h-full"/>
                 </div>
 
-                <div className="flex px-2 items-center justify-center gap-4">
+                <div className="flex px-2 items-center justify-center gap-4 absolute ml-[50%] -translate-x-[50%]">
                     <Action onClick={() => importDeck()}>Importar Deck</Action>
                     <Action onClick={() => importCollection()}>Importar Coleção</Action>
                     <Action onClick={downloadDeck} variant={mainDeckCards.length > 0 || extraDeckCards.length > 0 ? 'primary' : 'disabled'}>Exportar Deck</Action>
@@ -259,12 +289,20 @@ export default function Header(){
                     <input type="file" name="file" accept=".ydk" className='hidden' onChange={readDeck} id='teste' ref={deckRef}/>
                 </div>
 
-                <form className=' flex gap-4 items-center justify-center h-[80%] p-2 border-zinc-500 border-2 focus-within:border-violet-500 focus-within:border-2 focus-within:ring-violet-500' onSubmit={searchCard}>
-                    <input type="text" className='text-zinc-300' placeholder='Buscar Carta' onChange={(e) => setSearch(e.target.value)}/>
-                    <button type='submit'>
-                        <Search onClick={searchCard} />
-                    </button>
-                </form>
+                <div className="flex h-[80%] justify-center w-fit gap-4">
+                    {collection.length > 0 && (
+                        <div className="w-fit h-full">
+                            <FilterDropDown sets={availableCollections} rarity={availableRarity}/>
+                        </div>
+                    )}
+
+                    <form className=' flex gap-4 items-center justify-center h-full p-2 border-zinc-500 border-2 focus-within:border-violet-500 focus-within:border-2 focus-within:ring-violet-500' onSubmit={searchCard}>
+                        <input type="text" className='text-zinc-300' placeholder='Buscar Carta' onChange={(e) => setSearch(e.target.value)}/>
+                        <button type='submit'>
+                            <Search onClick={searchCard} />
+                        </button>
+                    </form>
+                </div>
 
             </div>
             
