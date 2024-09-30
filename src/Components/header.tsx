@@ -8,8 +8,8 @@ import axios from 'axios'
 import { Button } from "./ui/button";
 import { Action } from "./ui/headerAction";
 import logo from '/logo.png'
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { cardsAtom, currentCardsAtom, extraDeckCardsAtom, mainDeckCardsAtom, searchAtom } from "../helpers/atoms";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { cardRarityAtom, cardsAtom, cardSetAtom, currentCardsAtom, extraDeckCardsAtom, mainDeckCardsAtom, searchAtom } from "../helpers/atoms";
 import FilterDropDown from "./ui/dropdownMenu";
 
 export default function Header(){
@@ -22,7 +22,9 @@ export default function Header(){
     const [mainDeckCards, setMainDeckCards] = useRecoilState(mainDeckCardsAtom)
     const [search, setSearch] = useRecoilState(searchAtom)
     const setCurrentCards = useSetRecoilState(currentCardsAtom)
-
+    const cardRarity = useRecoilValue(cardRarityAtom);
+    const cardSet = useRecoilValue(cardSetAtom)
+    
     //MODALS
 	const [help, setHelp] = useState(false)
 	const [AIModal, setAIModal] = useState(false)
@@ -229,7 +231,9 @@ export default function Header(){
 		}
 
 		let aux = cards.filter((each:card) =>{
-			return each.name.toLowerCase().includes(search.toLowerCase())
+			return each.rarity.toLowerCase().includes(cardRarity.toLowerCase()) 
+            && each.set.toLowerCase().includes(cardSet.toLowerCase()) 
+            && each.name.toLowerCase().includes(search.toLowerCase())
 		})
 
 		setCurrentCards(aux)

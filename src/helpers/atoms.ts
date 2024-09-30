@@ -40,3 +40,13 @@ export const screenLoaderAtom = atom({
     key:'screenLoader',
     default: false as boolean
 })
+
+export const cardSetAtom = atom({
+    key:'cardSet',
+    default: '' as string
+})
+
+export const cardRarityAtom = atom({
+    key:'cardRarity',
+    default: '' as string
+})

@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import './dropDown.css';
 import { Check, Filter } from 'lucide-react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { cardsAtom, currentCardsAtom, searchAtom } from '../../helpers/atoms';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { cardRarityAtom, cardsAtom, cardSetAtom, currentCardsAtom, searchAtom } from '../../helpers/atoms';
 import { card } from '../../helpers/interfaces';
 
 
@@ -14,14 +13,12 @@ interface filterDD{
 
 export default function FilterDropDown({ rarity,sets }: filterDD) {
 
-    //STATES
-    const [cardSet, setCardSet] = useState('');
-    const [cardRarity, setCardRarity] = useState('');
-
     //ATOMS
     const cards = useRecoilValue(cardsAtom)
     const setCurrentCards = useSetRecoilState(currentCardsAtom)
     const search = useRecoilValue(searchAtom)
+    const [cardRarity, setCardRarity] = useRecoilState(cardRarityAtom);
+    const [cardSet, setCardSet] = useRecoilState(cardSetAtom)
 
     function handleSetSelection(set:string){
         if(set == cardSet){
