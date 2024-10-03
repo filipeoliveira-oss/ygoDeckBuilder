@@ -11,11 +11,11 @@ import logo from '/logo.png'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { cardRarityAtom, cardsAtom, cardSetAtom, currentCardsAtom, extraDeckCardsAtom, mainDeckCardsAtom, searchAtom } from "../helpers/atoms";
 import FilterDropDown from "./ui/dropdownMenu";
-
+import { useNavigate } from "react-router-dom";
 export default function Header(){
     
     const [collection, setCollection] = useState<card[]>([])
-
+    const navigate = useNavigate()
     //ATOMS
     const [cards, setCards] = useRecoilState(cardsAtom)
     const [extraDeckCards, setExtraDeckCards] = useRecoilState(extraDeckCardsAtom)
@@ -287,6 +287,7 @@ export default function Header(){
                     <Action onClick={downloadDeck} variant={mainDeckCards.length > 0 || extraDeckCards.length > 0 ? 'primary' : 'disabled'}>Exportar Deck</Action>
                     <Action onClick={() => setClearDeck(true)} variant={mainDeckCards.length > 0 || extraDeckCards.length > 0 ? 'primary' : 'disabled'}>Limpar Deck</Action>
                     <Action onClick={() => setAIModal(true)}>Otimizar com IA</Action>
+                    <Action onClick={() => navigate('/tournament')}>Torneio</Action>
                     <Action onClick={() => setHelp(true)}>Ajuda</Action>
 
                     <input type="file" name="file" accept=".csv" className='hidden' onChange={readCsv} id='teste' ref={collectionRef}/>

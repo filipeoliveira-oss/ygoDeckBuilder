@@ -3,16 +3,16 @@ import './App.css'
 import * as Dialog from '@radix-ui/react-dialog';
 import './modal.css'
 import { Book, Shield,  Swords, X } from 'lucide-react';
-import Header from './Components/header';
-import MainDeck from './Components/mainDeck';
-import ExtraDeck from './Components/extraDeck';
-import Collection from './Components/collection';
-import { ShootingStars } from './Components/ui/shootingStars';
-import { StarsBackground } from './Components/ui/starsBackground';
+import Header from '../../Components/header';
+import MainDeck from '../../Components/mainDeck';
+import ExtraDeck from '../../Components/extraDeck';
+import Collection from '../../Components/collection';
+import { ShootingStars } from '../../Components/ui/shootingStars';
+import { StarsBackground } from '../../Components/ui/starsBackground';
 import { ToastContainer } from 'react-toastify';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { cardToInspectAtom, isCardInspectingAtom, screenLoaderAtom } from './helpers/atoms';
-import ScreenLoader from './Components/ui/screenLoader';
+import { cardToInspectAtom, isCardInspectingAtom, screenLoaderAtom } from '../../helpers/atoms';
+import ScreenLoader from '../../Components/ui/screenLoader';
 
 export default function App() {
 
