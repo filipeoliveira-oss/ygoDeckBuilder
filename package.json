@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "types": "cd ./src/helpers && npx supabase gen types --lang=typescript --project-id  ilqwiwhhbfwxvrhhfkuz --schema public > supabase.ts"
   },
   "dependencies": {
     "@radix-ui/colors": "^3.0.0",
@@ -46,7 +47,7 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "postcss": "^8.4.45",
-    "supabase": "^1.200.3",
+    "supabase": "^1.203.0",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",

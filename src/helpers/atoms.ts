@@ -1,5 +1,6 @@
 import { atom } from "recoil";
 import { card, CardRoot, decks } from "./interfaces";
+import { Session } from "@supabase/supabase-js";
 
 export const cardsAtom = atom({
     key:'cards',
@@ -49,4 +50,9 @@ export const cardSetAtom = atom({
 export const cardRarityAtom = atom({
     key:'cardRarity',
     default: '' as string
+})
+
+export const sessionAtom = atom({
+    key:'userSession',
+    default: {} as Session | null
 })

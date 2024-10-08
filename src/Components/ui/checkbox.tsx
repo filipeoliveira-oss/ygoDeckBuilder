@@ -2,7 +2,7 @@
 import {Root, Indicator, } from "@radix-ui/react-checkbox";
 import { Check } from "lucide-react";
 
-export default function Checkbox({changeFunction, identifier}: {changeFunction:Function, identifier:string}){
+export default function Checkbox({changeFunction, identifier, checked}: {changeFunction:Function, identifier:string, checked?:boolean}){
     return (
         <form>
             <div className="flex items-center outline-none">
@@ -11,6 +11,7 @@ export default function Checkbox({changeFunction, identifier}: {changeFunction:F
                     id={identifier}
                     onCheckedChange={(e) => changeFunction(e)}
                     name={identifier}
+                    defaultChecked={checked || false}
                 >
                     <Indicator className="text-[#8b5cf6] outline-none">
                         <Check />

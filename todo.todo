@@ -1,4 +1,8 @@
-☐ 1. Criar função de selecionar torneios disponíveis
-☐ 2. criar função para buscar quais competidores estão linkados com o torneio selecionado
-☐ 3. criar função de editar competidores linkados
-☐ 4. criar função de gerenciar torneio 
+✔ 1. Criar função de selecionar torneios disponíveis @done(24-10-08 16:39)
+✔ 2. criar função para buscar quais competidores estão linkados com o torneio selecionado @done(24-10-08 16:39)
+✔ 3. criar função de editar competidores linkados @done(24-10-08 18:12)
+✔ 4. criar função de gerenciar torneio @done(24-10-08 19:10)
+✔ Função de deslogar @done(24-10-08 18:15)
+✔ 5. adicionar loading nos requests @done(24-10-08 19:14)
+✔ Garantir que o mesmo usuario nao se cadastre novamente no mesmo torneio @done(24-10-08 19:47)
+

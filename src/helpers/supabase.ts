@@ -7,56 +7,92 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
+      battles: {
+        Row: {
+          battle_id: number
+          created_at: string
+          fcompetitor_result: number
+          first_competitor: number
+          scompetitor_result: number
+          season_id: number
+          second_competitor: number
+        }
+        Insert: {
+          battle_id?: number
+          created_at?: string
+          fcompetitor_result: number
+          first_competitor: number
+          scompetitor_result: number
+          season_id: number
+          second_competitor: number
+        }
+        Update: {
+          battle_id?: number
+          created_at?: string
+          fcompetitor_result?: number
+          first_competitor?: number
+          scompetitor_result?: number
+          season_id?: number
+          second_competitor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "battles_first_competitor_fkey"
+            columns: ["first_competitor"]
+            isOneToOne: false
+            referencedRelation: "competitors"
+            referencedColumns: ["competitor_id"]
+          },
+          {
+            foreignKeyName: "battles_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["season_id"]
+          },
+          {
+            foreignKeyName: "battles_second_competitor_fkey"
+            columns: ["second_competitor"]
+            isOneToOne: false
+            referencedRelation: "competitors"
+            referencedColumns: ["competitor_id"]
+          },
+        ]
+      }
       competitors: {
         Row: {
+          collection: string | null
           competitor_email: string
           competitor_id: number
-          deck: string | null
+          competitor_status:
+            | Database["public"]["Enums"]["competitor_status"]
+            | null
           isAdmin: boolean
           joinned_at: string
           name: string
           tournament_id: number
         }
         Insert: {
+          collection?: string | null
           competitor_email?: string
           competitor_id?: number
-          deck?: string | null
+          competitor_status?:
+            | Database["public"]["Enums"]["competitor_status"]
+            | null
           isAdmin?: boolean
           joinned_at?: string
           name: string
           tournament_id: number
         }
         Update: {
+          collection?: string | null
           competitor_email?: string
           competitor_id?: number
-          deck?: string | null
+          competitor_status?:
+            | Database["public"]["Enums"]["competitor_status"]
+            | null
           isAdmin?: boolean
           joinned_at?: string
           name?: string
@@ -65,6 +101,35 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "competitors_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["tournament_id"]
+          },
+        ]
+      }
+      seasons: {
+        Row: {
+          season_id: number
+          season_name: string
+          season_status: Database["public"]["Enums"]["season_status"]
+          tournament_id: number
+        }
+        Insert: {
+          season_id?: number
+          season_name?: string
+          season_status?: Database["public"]["Enums"]["season_status"]
+          tournament_id: number
+        }
+        Update: {
+          season_id?: number
+          season_name?: string
+          season_status?: Database["public"]["Enums"]["season_status"]
+          tournament_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seasons_tournament_id_fkey"
             columns: ["tournament_id"]
             isOneToOne: false
             referencedRelation: "tournaments"
@@ -107,7 +172,8 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      competitor_status: "WAPPR" | "APPR"
+      season_status: "CURRENT" | "OLD"
     }
     CompositeTypes: {
       [_ in never]: never

@@ -39,9 +39,33 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
         }
 
         if (data[0].is_public === false) {
-            toast.error('Seu email não consta na lista de convidados. Por favor, entre em contato com um administrador do torneio')
 
-            return
+            const { data, error } = await supabase.from('competitors').select().eq("tournament_id", code).neq("competitor_status", "APPR")
+            console.log(data)
+            if (error) {
+                toast.error('Ocorreu um erro inesperado, tente novamente!')
+                return
+            }
+
+            if (data.length > 0) {
+                if (userSession.email) {
+                    const { data, error } = await supabase.from('competitors')
+                        .update({
+                            competitor_status:"APPR"
+                        })
+                        .eq("competitor_email", userSession.email)
+                        .eq("tournament_id", code)
+                        
+
+                    if (error) {
+                        toast.error('Ocorreu um erro inesperado, tente novamente!')
+                        return
+                    }
+                }
+            } else {
+                toast.error('Seu email não consta na lista de convidados ou você já está nesse torneio. Por favor, entre em contato com um administrador do torneio')
+                return
+            }
         }
 
         if (data[0].is_public === true) {
@@ -52,9 +76,9 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
             })
         }
 
-        const { data: Tournaments, error: TournamentsError } = await supabase.from('competitors').select(`tournaments(tournament_id, tournament_name, active, is_public)`).eq('competitor_email', (userSession.email || ''))
+        const { data: Tournaments, error: TournamentsError } = await supabase.from('competitors').select(`tournaments(tournament_id, tournament_name, active, is_public)`).eq('competitor_email', (userSession.email || '')).eq("competitor_status", "APPR")
 
-        if (!TournamentsError) {
+        if (!TournamentsError && Tournaments?.length > 0) {
             setTournaments(Tournaments)
             console.log(Tournaments)
             toast.success('Juntou-se com sucesso!')
