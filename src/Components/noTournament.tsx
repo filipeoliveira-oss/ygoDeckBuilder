@@ -1,0 +1,140 @@
+import React, { useState } from "react"
+import { Button } from "./ui/button"
+import { supabase } from "../helpers/utils"
+import { toast } from 'react-toastify';
+import { Tables } from "../helpers/supabase";
+import { User } from "@supabase/supabase-js";
+import Checkbox from "./ui/checkbox";
+export default function NoTournament({ setTournaments, setLoading, userSession }: { setTournaments: Function, setLoading: Function, userSession: User }) {
+
+    const [code, setCode] = useState('')
+    const [creating, setCreation] = useState(false)
+    const [tournamentName, setTournamentName] = useState('')
+    const [publicTournament, setPublicTournament] = useState(false)
+
+    async function handleEnter(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+
+        if (!code) {
+            toast.error('Digite um código válido')
+            return
+        }
+
+        setLoading(true)
+        const { data, error } = await supabase.from('tournaments').select().eq('tournament_id', code).limit(1).returns<Tables<'tournaments'>[]>()
+
+        if (error) {
+            toast.error('Algo inesperado aconteceu, tente novamente!')
+            return
+        }
+
+        if (data.length < 1) {
+            toast.error('Esse código de torneio não existe')
+            return
+        }
+
+        if (data[0].active === false) {
+            toast.error('Esse torneio não está mais disponível')
+            return
+        }
+
+        if (data[0].is_public === false) {
+            toast.error('Seu email não consta na lista de convidados. Por favor, entre em contato com um administrador do torneio')
+
+            return
+        }
+
+        if (data[0].is_public === true) {
+            const { error } = await supabase.from('competitors').insert({
+                name: userSession.user_metadata.full_name,
+                tournament_id: parseInt(code),
+                competitor_email: userSession.email,
+            })
+        }
+
+        const { data: Tournaments, error: TournamentsError } = await supabase.from('competitors').select(`tournaments(tournament_id, tournament_name, active, is_public)`).eq('competitor_email', (userSession.email || ''))
+
+        if (!TournamentsError) {
+            setTournaments(Tournaments)
+            console.log(Tournaments)
+            toast.success('Juntou-se com sucesso!')
+        }
+
+        setLoading(false)
+    }
+
+
+    async function handleCreation(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+
+
+        setLoading(true)
+        const { data: TournamentData, error: TournamentError } = await supabase.from('tournaments').insert({
+            active: true,
+            is_public: publicTournament,
+            tournament_name: tournamentName
+        }).select()
+
+        if (TournamentError) {
+            toast.error('Ocorreu um erro durante a criação do torneio, tente novamente.')
+            return
+        }
+
+        if (TournamentData) {
+            const { error: CompetitorError } = await supabase.from('competitors').insert({
+                name: userSession.user_metadata.full_name,
+                tournament_id: TournamentData[0]?.tournament_id,
+                competitor_email: userSession.email,
+                isAdmin: true
+            })
+
+            if (CompetitorError) {
+                toast.error('Ocorreu um erro durante a criação do torneio, tente novamente.')
+                return
+            }
+        }
+
+
+        const { data: Tournaments, error: TournamentsError } = await supabase.from('competitors').select(`tournaments(tournament_id, tournament_name, active, is_public)`).eq('competitor_email', (userSession.email || ''))
+
+        if (!TournamentsError) {
+            setTournaments(Tournaments)
+            toast.success('Torneio criado com sucesso!')
+        }
+        setLoading(false)
+    }
+
+
+    return (
+        <div className="w-full h-full flex justify-center items-center">
+            <div className="h-[40%] w-[30%] flex flex-col justify-center items-center bg-zinc-700 gap-8">
+                {creating ?
+                    <div className=" w-full h-full p-4 flex flex-col justify-center items-center gap-4">
+                        <span className="text-2xl font-bold">Criar torneio</span>
+                        <form onSubmit={(e) => handleCreation(e)} className="flex flex-col items-center gap-4 w-full h-full">
+                            <label htmlFor="name">
+                                Name:
+                                <input type="text" maxLength={25} className="bg-zinc-500 h-12 w-full text-2xl text-center font-semibold cursor-text" value={tournamentName} onChange={(e) => setTournamentName(e.target.value)} name="name" id="name" />
+                            </label>
+                            <label htmlFor="public" className="flex flex-row gap-4 ">
+                                Torneio público?
+                                <Checkbox changeFunction={setPublicTournament} identifier="public" />
+                            </label>
+                            <Button className="w-40 h-8 text-lg" type="submit">Criar torneio</Button>
+                        </form>
+                        <Button className="w-40 h-8 text-lg bg-zinc-600" onClick={() => { setCreation(false) }}>Digitar código</Button>
+                    </div>
+                    :
+                    <>
+                        <span className="text-2xl font-bold">Digite o código do torneio</span>
+                        <form onSubmit={(e) => { handleEnter(e) }} className="flex flex-col items-center gap-4">
+                            <input type="number" className="bg-zinc-500 h-20 w-48 text-2xl text-center font-semibold" value={code} onChange={(e) => { setCode(e.target.value) }} />
+                            <Button className="w-40 h-8 text-lg">Entrar</Button>
+                        </form>
+                        <Button className="w-40 h-8 text-lg bg-zinc-600" onClick={() => { setCreation(true) }}>Criar torneio</Button>
+                    </>
+                }
+            </div>
+        </div>
+    )
+}

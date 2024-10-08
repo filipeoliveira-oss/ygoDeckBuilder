@@ -8,7 +8,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Tournament from './routes/tournament/app.tsx';
+import Tournament from './routes/tournament/App.tsx';
 
 
 const router = createBrowserRouter([
