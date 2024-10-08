@@ -49,7 +49,7 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
 
             if (data.length > 0) {
                 if (userSession.email) {
-                    const { data, error } = await supabase.from('competitors')
+                    const { error } = await supabase.from('competitors')
                         .update({
                             competitor_status:"APPR"
                         })
@@ -74,6 +74,11 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
                 tournament_id: parseInt(code),
                 competitor_email: userSession.email,
             })
+
+            if(error){
+                toast.error('Ocorreu um erro na inserção, tente novamente')
+                return
+            }
         }
 
         const { data: Tournaments, error: TournamentsError } = await supabase.from('competitors').select(`tournaments(tournament_id, tournament_name, active, is_public)`).eq('competitor_email', (userSession.email || '')).eq("competitor_status", "APPR")

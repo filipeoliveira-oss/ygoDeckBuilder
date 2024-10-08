@@ -3,7 +3,7 @@ import { ShootingStars } from '../../Components/ui/shootingStars';
 import { StarsBackground } from '../../Components/ui/starsBackground';
 import ScreenLoader from '../../Components/ui/screenLoader';
 import { useEffect, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import TournamentLogged from '../../Components/TournamentLogged';
 import TournamentHeader from '../../Components/TournamentHeader';
 import { Tables } from '../../helpers/supabase';
@@ -11,7 +11,6 @@ import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa, } from '@supabase/auth-ui-shared'
 import { supabase } from '../../helpers/utils';
 import { Session } from '@supabase/supabase-js';
-import { useNavigate } from 'react-router-dom';
 
 export default function Tournament() {
 
@@ -73,7 +72,7 @@ export default function Tournament() {
             setSession(session)
         })
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session)
             
         })
