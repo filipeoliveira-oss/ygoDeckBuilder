@@ -57,7 +57,7 @@ export default function Tournament() {
     }
 
     async function getSeasonsForTournament() {
-        const {data, error} = await supabase.from('seasons').select().eq('tournament_id', tournamentId)
+        const {data, error} = await supabase.from('seasons').select().eq('tournament_id', tournamentId).order('season_id',{ascending:false})
 
         if(error){
             throw new Error('Ocorreu um erro na requisição das temporadas, tente novamente')
@@ -151,7 +151,7 @@ export default function Tournament() {
                             setLoader={setLoader}
                             setSeasons={setSeasons}
                             />
-                        <TournamentLogged userSession={session.user} setLoader={setLoader}/>
+                        <TournamentLogged userSession={session.user} setLoader={setLoader} seasons={seasons}/>
                     </>
                     :
                     <AuthForm />
