@@ -24,45 +24,59 @@ export default function Tournament() {
     const [seasons, setSeasons] = useState<Tables<'seasons'>[]>([])
 
     async function getTournamentsByUser(){
+        setLoader(true)
         const {data, error} = await supabase.from('competitors')
         .select('joinned_at, tournaments(tournament_id, tournament_name, active, is_public)')
         .eq('competitor_email',(session?.user?.email || ''))
         .eq('competitor_status', 'APPR')
 
         if(error){
+            setLoader(false)
             throw new Error('Algo inesperado aconteceu, tente novamente!')
         }
+        setLoader(false)
 
         return data
     }
 
     async function getUsersByTournament() {
+        setLoader(true)
+
         const {data, error} = await supabase.from('competitors').select().eq('tournament_id', tournamentId)
 
         if(error){
+            setLoader(false)
             throw new Error('Ocorreu um erro inesperado, tente novamente')
         }
+        setLoader(false)
 
         return data
     }
 
     async function getTournamentDetails(){
+        setLoader(true)
+
         const {data, error} = await supabase.from('tournaments').select().eq('tournament_id', tournamentId)
 
         if(error){
+            setLoader(false)
+
             throw new Error('Ocorreu um erro na requisição, tente novamente')
         }
-
+        setLoader(false)
         return data
     }
 
     async function getSeasonsForTournament() {
+        setLoader(true)
+
         const {data, error} = await supabase.from('seasons').select().eq('tournament_id', tournamentId).order('season_id',{ascending:false})
 
         if(error){
+            setLoader(false)
             throw new Error('Ocorreu um erro na requisição das temporadas, tente novamente')
         }
-
+        setLoader(false)
         return data
     }
 
@@ -70,6 +84,7 @@ export default function Tournament() {
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session)
+            console.log(session)
         })
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -82,7 +97,8 @@ export default function Tournament() {
 
 
     useEffect(() =>{
-        if(session){
+        if(session && userTournaments.length == 0){
+            console.log('101')
             getTournamentsByUser().then((res) =>{
                 setUserTournaments(res)
 
@@ -132,7 +148,9 @@ export default function Tournament() {
         <>
             <ShootingStars starWidth={20} starHeight={2} minDelay={3000} maxDelay={4200} />
             <StarsBackground starDensity={0.00130} />
-            {loader && <ScreenLoader />}
+            <div style={loader ? {} : {display:'none'}}>
+                <ScreenLoader/>
+            </div>
             <ToastContainer />
             <div className='flex flex-1 flex-col relative h-[100dvh]'>
                 {session /*LOGGED*/ ?
@@ -151,7 +169,7 @@ export default function Tournament() {
                             setLoader={setLoader}
                             setSeasons={setSeasons}
                             />
-                        <TournamentLogged userSession={session.user} setLoader={setLoader} seasons={seasons}/>
+                        <TournamentLogged userSession={session.user} setLoader={setLoader} seasons={seasons} competitors={competitors}/>
                     </>
                     :
                     <AuthForm />

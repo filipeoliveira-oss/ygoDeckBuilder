@@ -6,3 +6,11 @@
 ✔ 5. adicionar loading nos requests @done(24-10-08 19:14)
 ✔ Garantir que o mesmo usuario nao se cadastre novamente no mesmo torneio @done(24-10-08 19:47)
 
+✔ Importar dados para o banco de dados em BATTLES @done(24-10-09 10:34)
+✔ Criar leaderboard dos colocados @done(24-10-09 12:01)
+✔ Criar funcao de adicionar batalha @done(24-10-09 16:58)
+☐ Criar tabela de vitórias
+☐ Criar página de perfil
+☐ Criar seasons
+☐ Criar função de criar novo torneio
+☐ Descomentar linha 135 TournamentLogged.tsx

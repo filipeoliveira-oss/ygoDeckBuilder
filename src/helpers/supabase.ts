@@ -110,18 +110,21 @@ export type Database = {
       }
       seasons: {
         Row: {
+          created_at: string
           season_id: number
           season_name: string
           season_status: Database["public"]["Enums"]["season_status"]
           tournament_id: number
         }
         Insert: {
+          created_at?: string
           season_id?: number
           season_name?: string
           season_status?: Database["public"]["Enums"]["season_status"]
           tournament_id: number
         }
         Update: {
+          created_at?: string
           season_id?: number
           season_name?: string
           season_status?: Database["public"]["Enums"]["season_status"]

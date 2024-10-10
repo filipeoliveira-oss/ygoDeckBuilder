@@ -1,0 +1,95 @@
+import { CrownIcon } from "lucide-react"
+import { motion } from 'framer-motion';
+
+interface place {
+    competitorName: string,
+    position: 'First' | 'Second' | 'Third',
+    wins:number
+    losses:number
+}
+
+interface podium{
+    first:{
+        competitorId: number,
+        wins: number,
+        losses: number,
+        competitorName: string
+    },
+    second:{
+        competitorId: number,
+        wins: number,
+        losses: number,
+        competitorName: string
+    },
+    third:{
+        competitorId: number,
+        wins: number,
+        losses: number,
+        competitorName: string
+    },
+}
+
+
+
+export default function Podium({first,second,third}:podium) {
+    const Place = ({ competitorName, position,losses,wins }: place) => {
+
+        let crownColor = '';
+        let translate = '';
+
+        switch (position) {
+            case "First":
+                crownColor = 'gold';
+                translate = '0';
+                break
+            case "Second":
+                crownColor = 'silver';
+                translate = '3';
+                break
+            case "Third":
+                crownColor = '#CD7F32';
+                translate = '5';
+                break
+        }
+
+        let style = {
+            backgroundImage: `url(https://i.pinimg.com/736x/d1/46/7b/d1467b8103a9e846b1a7605d169c9f5e.jpg)`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+        }
+
+//transform: `translateY(${translate}rem)`
+        return (
+            wins === 0 && losses === 0 ? <></>
+            : 
+            <motion.div 
+                className={`rounded w-[30%] h-[100%] flex flex-col items-center`} 
+                style={{ marginTop:`${translate}rem` }}
+                // key={value}
+                // initial={{ opacity: 0, scale: 0.5, translateY: 0}}
+                // animate={{ opacity: 1, scale: 1, translateY: `${translate}rem`  }}
+                // exit={{ opacity: 0, scale: 0.5, translateY: `${translate}rem` }}
+                // transition={{ duration: 1, type:"tween" }}
+            >
+                <div className='rounded-full h-28 w-28 text-center border-4 relative mt-4 ' style={style}>
+                    <div className='absolute rounded-full h-10 w-10 bg-zinc-700 top-0 left-[50%] -translate-x-[50%] -translate-y-[70%] flex items-center justify-center'>
+                        <CrownIcon fill={crownColor} stroke={crownColor} />
+                    </div>
+                </div>
+                
+                <div className="w-full h-fit flex flex-col gap-2 justify-center items-center">
+                    <span className="capitalize">{competitorName}</span>
+                    <span className="text-zinc-400">{wins}V/{losses}D</span>
+                </div>
+            </motion.div>
+        )
+    }
+
+    return (
+        <div className='w-full h-full flex flex-row  justify-center'>
+            {second ? <Place competitorName={second?.competitorName} wins={second?.wins} losses={second?.losses} position='Second' /> : ''}
+            {first ?  <Place competitorName={first?.competitorName} wins={first?.wins}  losses={first?.losses} position='First' /> : ''}
+            {third ? <Place competitorName={third?.competitorName} wins={third?.wins}  losses={third?.losses} position='Third' /> :''}
+        </div>
+    )
+}

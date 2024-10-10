@@ -165,7 +165,6 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
                 setLoader(false)
                 return
             }
-
             const {data, error:Terror} = await supabase.from('competitors')
             .select('joinned_at, tournaments(tournament_id, tournament_name, active, is_public)')
             .eq('competitor_email',(userSession?.email || ''))
