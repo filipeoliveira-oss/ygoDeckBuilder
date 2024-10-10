@@ -40,6 +40,19 @@ Done, you have your Dev Environment up and running.
 
 ![screenshot](./public/main.png)
 
+## New Tournament Module
+
+if you simply want to use this module, you can just create an account and use it. Although, if you want to edit this part of code, a few steps must be followed
+
+1. You need to create an account on [Supabase](https://supabase.com/)
+2. After that, create a new project to host your database, auth and storage
+3. Once you have the project created, get the credentials and place them in a .env file to use across the app and follow the steps in the documentation to create the client
+4. Go to the Dashboard => SQL Editor
+5. Run the files from ./src/supabase/*
+6. Go to Auth  => Providers and enable email and Discord
+7. Go to Storage => create a public bucket with the name `competitorsPhoto` and define the MIME types as `image/*`
+8.
+
 ## Built With
 
 * [React](https://react.dev/) - The library for web and native user interfaces

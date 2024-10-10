@@ -21,3 +21,7 @@
 ✔ Passar em todos os useEffect e adicionar uma condição extra de verificação @done(24-10-10 15:44)
 ✔ Adicionar comentarios para os estados @done(24-10-10 16:01)
 ✔ Remover console.log @done(24-10-10 15:42)
+☐ Adicionar codigo do torneio 
+
+----bugs---
+☐ imagem nao alterando no edit

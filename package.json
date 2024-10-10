@@ -11,6 +11,7 @@
     "types": "cd ./src/helpers && npx supabase gen types --lang=typescript --project-id  ilqwiwhhbfwxvrhhfkuz --schema public > supabase.ts"
   },
   "dependencies": {
+    "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-checkbox": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.1",

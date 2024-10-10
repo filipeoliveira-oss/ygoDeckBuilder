@@ -93,6 +93,7 @@ export default function Tournament() {
         if(!session){
             supabase.auth.getSession().then(({ data: { session } }) => {
                 setSession(session)
+                console.log(session)
             })
     
             const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
