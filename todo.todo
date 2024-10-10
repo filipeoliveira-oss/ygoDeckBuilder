@@ -10,7 +10,14 @@
 ✔ Criar leaderboard dos colocados @done(24-10-09 12:01)
 ✔ Criar funcao de adicionar batalha @done(24-10-09 16:58)
 ☐ Criar tabela de vitórias
-☐ Criar página de perfil
-☐ Criar seasons
-☐ Criar função de criar novo torneio
-☐ Descomentar linha 135 TournamentLogged.tsx
+✘ Criar página de perfil (https://dribbble.com/shots/24080974-Settings-Profile-Page) @cancelled(24-10-09 23:00)
+✔ Criar seasons @done(24-10-09 22:23)
+✔ Criar função de criar novo torneio @done(24-10-10 11:43)
+✔ Criar função de entrar em torneio @done(24-10-10 13:09)
+✔ Verificar regra de admin para algumas funções @done(24-10-10 11:09)
+✔ Criar funcao de editar foto @done(24-10-10 15:28)
+✔ funcao pra enviar foto no cadastro @done(24-10-10 15:03)
+✔ Descomentar linha 135 TournamentLogged.tsx @done(24-10-10 13:10)
+✔ Passar em todos os useEffect e adicionar uma condição extra de verificação @done(24-10-10 15:44)
+✔ Adicionar comentarios para os estados @done(24-10-10 16:01)
+✔ Remover console.log @done(24-10-10 15:42)

@@ -11,17 +11,26 @@ import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa, } from '@supabase/auth-ui-shared'
 import { supabase } from '../../helpers/utils';
 import { Session } from '@supabase/supabase-js';
+import { useSetRecoilState } from 'recoil';
+import { isAdminAtom } from '../../helpers/atoms';
 
 export default function Tournament() {
 
+    //Loader
     const [loader, setLoader] = useState(false)
+
+    //Tournaments
+    const [tournaments, setTournaments] = useState<Array<Tables<'tournaments'>>>([])
     const [tournamentId, setTournamentId] = useState<number>(0)
     const [tournamentName, setTournamentName] = useState<string>('')
-    const [competitors, setCompetitors] = useState<Array<Tables<'competitors'>>>([])
     const [userTournaments,setUserTournaments] = useState<Array<any>>([])
-    const [session, setSession] = useState<Session | null>(null)
     const [tournamentDetail, setTournamentDetail] = useState<Tables<'tournaments'>>()
     const [seasons, setSeasons] = useState<Tables<'seasons'>[]>([])
+
+    //Competitors
+    const [competitors, setCompetitors] = useState<Array<Tables<'competitors'>>>([])
+    const [session, setSession] = useState<Session | null>(null)
+    const setIsAdmin = useSetRecoilState(isAdminAtom)
 
     async function getTournamentsByUser(){
         setLoader(true)
@@ -80,25 +89,23 @@ export default function Tournament() {
         return data
     }
 
-
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session)
-            console.log(session)
-        })
+        if(!session){
+            supabase.auth.getSession().then(({ data: { session } }) => {
+                setSession(session)
+            })
+    
+            const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+                setSession(session)
+                
+            })
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session)
-            
-        })
-        return () => subscription.unsubscribe()
+            return () => subscription.unsubscribe()
+        }
     }, [])
-
-
 
     useEffect(() =>{
         if(session && userTournaments.length == 0){
-            console.log('101')
             getTournamentsByUser().then((res) =>{
                 setUserTournaments(res)
 
@@ -112,9 +119,15 @@ export default function Tournament() {
     },[session])
 
     useEffect(() =>{
-        if(tournamentId){
+        if(tournamentId && competitors.length === 0){
             getUsersByTournament().then((res) =>{
                 setCompetitors(res)
+
+                let currentUser = res.filter((each:Tables<'competitors'>) =>{
+                    return each.competitor_email === session?.user.email
+                })
+
+                setIsAdmin(currentUser[0].isAdmin)
             })
 
             getTournamentDetails().then((tournamentDetail) =>{
@@ -127,6 +140,7 @@ export default function Tournament() {
             })
         }
     },[tournamentId])
+
 
     const AuthForm = () => {
         return (
@@ -154,8 +168,8 @@ export default function Tournament() {
             <ToastContainer />
             <div className='flex flex-1 flex-col relative h-[100dvh]'>
                 {session /*LOGGED*/ ?
-                    <>
-                        <TournamentHeader 
+                    <>  
+                        <TournamentHeader
                             competitors={competitors} 
                             tournamentId={tournamentId} 
                             setCompetitors={setCompetitors} 
@@ -168,8 +182,9 @@ export default function Tournament() {
                             setTournamentName={setTournamentName}
                             setLoader={setLoader}
                             setSeasons={setSeasons}
-                            />
-                        <TournamentLogged userSession={session.user} setLoader={setLoader} seasons={seasons} competitors={competitors}/>
+                            setTournaments={setTournaments}
+                        />
+                        <TournamentLogged userSession={session.user} setLoader={setLoader} seasons={seasons} competitors={competitors} setTournaments={setTournaments} tournaments={tournaments}/>
                     </>
                     :
                     <AuthForm />

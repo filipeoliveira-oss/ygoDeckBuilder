@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import * as Accordion from "@radix-ui/react-accordion";
 import classNames from "classnames";
 import "./SeasonAccordion.css";
@@ -7,11 +7,13 @@ import { Tables } from "../../helpers/supabase";
 import { supabase } from "../../helpers/utils";
 import { toast } from 'react-toastify';
 import SeasonScreen from "./seasonScreen";
+import { RingLoader } from "react-spinners";
 
 
 interface AccordionTriggerProps extends React.ComponentPropsWithoutRef<typeof Accordion.Trigger> {
     children: React.ReactNode;
     className?: string;
+    loading:boolean
 }
 
 interface AccordionContentProps extends React.ComponentPropsWithoutRef<typeof Accordion.Content> {
@@ -19,12 +21,12 @@ interface AccordionContentProps extends React.ComponentPropsWithoutRef<typeof Ac
     className?: string;
 }
 
-function AccordionTrigger({ children, className, ...props }: AccordionTriggerProps) {
+function AccordionTrigger({ loading, children, className, ...props }: AccordionTriggerProps) {
     return (
         <Accordion.Header className="AccordionHeader">
             <Accordion.Trigger className={classNames("AccordionTrigger", className)} {...props}>
                 {children}
-                <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                {loading ? <RingLoader size={20} color="#fff"/> : <ChevronDownIcon className="AccordionChevron" aria-hidden />}
             </Accordion.Trigger>
         </Accordion.Header>
     );
@@ -42,7 +44,8 @@ interface results {
     competitorId: number,
     wins: number,
     losses: number,
-    competitorName: string
+    competitorName: string,
+    photoUrl:string
 }
 
 interface seasonsFetched {
@@ -50,17 +53,18 @@ interface seasonsFetched {
     battles: Array<results>
 }
 
-export default function SeasonAccordion({ seasons, setLoader, competitors }: { seasons: Array<Tables<'seasons'>>, setLoader: Function, competitors:Array<Tables<'competitors'>> }) {
+export default function SeasonAccordion({ seasons, competitors }: { seasons: Array<Tables<'seasons'>>, setLoader: Function, competitors:Array<Tables<'competitors'>> }) {
 
     const [seasonsFetched, setSeasonsFetched] = useState<Array<seasonsFetched>>([])
     const [openItem, setOpenItem] = useState<string>('')
+    const [whoIsLoading, setWhoIsLoading] = useState(0)
 
     function getCompetitorName(id: number) {
         let competitor = competitors.filter((competitor: Tables<'competitors'>) => {
             return competitor.competitor_id === id
         })
 
-        return competitor[0]?.name
+        return [competitor[0]?.name, competitor[0]?.photo_url]
     }
 
     async function sortBattles(battles: Tables<'battles'>[]) {
@@ -93,7 +97,8 @@ export default function SeasonAccordion({ seasons, setLoader, competitors }: { s
             competitorId,
             wins: stats.wins,
             losses: stats.losses,
-            competitorName: getCompetitorName(competitorId)
+            competitorName: getCompetitorName(competitorId)[0] || '',
+            photoUrl: getCompetitorName(competitorId)[1] || ''
         }));
 
 
@@ -126,7 +131,7 @@ export default function SeasonAccordion({ seasons, setLoader, competitors }: { s
 
         if (index == -1) {
             // setLoader(true)
-
+            setWhoIsLoading(parseInt(seasonId))
             const { data, error } = await supabase.from('battles').select().eq('season_id', parseInt(seasonId))
 
             if (error) {
@@ -145,12 +150,11 @@ export default function SeasonAccordion({ seasons, setLoader, competitors }: { s
             })
 
             setSeasonsFetched(aux)
+            setWhoIsLoading(0)
         }
         
         setOpenItem(seasonId)
     }
-
-
 
     return (
         <Accordion.Root className="AccordionRoot" type="single" collapsible onValueChange={(value) => handleClick(value)} value={openItem}>
@@ -160,8 +164,8 @@ export default function SeasonAccordion({ seasons, setLoader, competitors }: { s
                 })
 
                 return (
-                    <Accordion.Item className="AccordionItem" value={String(season.season_id)} key={season.season_id} onClick={() => console.log('click')}>
-                        <AccordionTrigger>{season.season_name}</AccordionTrigger>
+                    <Accordion.Item className="AccordionItem" value={String(season.season_id)} key={season.season_id}>
+                        <AccordionTrigger loading={whoIsLoading === season.season_id}>{season.season_name} </AccordionTrigger>
                         <AccordionContent>
                             {curr[0]?.battles?.length > 0 ? <SeasonScreen seasonResults={curr[0].battles}/> : <span>Não existem dados disponíveis para essa temporada</span>} 
                         </AccordionContent>
@@ -171,3 +175,4 @@ export default function SeasonAccordion({ seasons, setLoader, competitors }: { s
         </Accordion.Root>
     );
 }
+

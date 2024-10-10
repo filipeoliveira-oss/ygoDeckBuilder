@@ -56,3 +56,8 @@ export const sessionAtom = atom({
     key:'userSession',
     default: {} as Session | null
 })
+
+export const isAdminAtom = atom({
+    key:'isAdmin',
+    default:false as boolean
+})

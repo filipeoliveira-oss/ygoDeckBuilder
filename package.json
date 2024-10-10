@@ -11,13 +11,11 @@
     "types": "cd ./src/helpers && npx supabase gen types --lang=typescript --project-id  ilqwiwhhbfwxvrhhfkuz --schema public > supabase.ts"
   },
   "dependencies": {
-    "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-checkbox": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
     "@radix-ui/react-select": "^2.1.2",
-    "@radix-ui/react-toggle-group": "^1.1.0",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/supabase-js": "^2.45.4",

@@ -4,7 +4,8 @@ import { supabase } from "../helpers/utils"
 import { toast } from 'react-toastify';
 import { Tables } from "../helpers/supabase";
 import { User } from "@supabase/supabase-js";
-import Checkbox from "./ui/checkbox";
+import CreateNewTournament from "./ui/createNewTournament";
+import JoinTournament from "./ui/joinTournament";
 export default function NoTournament({ setTournaments, setLoading, userSession }: { setTournaments: Function, setLoading: Function, userSession: User }) {
 
     const [code, setCode] = useState('')
@@ -41,7 +42,6 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
         if (data[0].is_public === false) {
 
             const { data, error } = await supabase.from('competitors').select().eq("tournament_id", code).neq("competitor_status", "APPR")
-            console.log(data)
             if (error) {
                 toast.error('Ocorreu um erro inesperado, tente novamente!')
                 return
@@ -51,11 +51,11 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
                 if (userSession.email) {
                     const { error } = await supabase.from('competitors')
                         .update({
-                            competitor_status:"APPR"
+                            competitor_status: "APPR"
                         })
                         .eq("competitor_email", userSession.email)
                         .eq("tournament_id", code)
-                        
+
 
                     if (error) {
                         toast.error('Ocorreu um erro inesperado, tente novamente!')
@@ -75,7 +75,7 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
                 competitor_email: userSession.email,
             })
 
-            if(error){
+            if (error) {
                 toast.error('Ocorreu um erro na inserção, tente novamente')
                 return
             }
@@ -85,7 +85,6 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
 
         if (!TournamentsError && Tournaments?.length > 0) {
             setTournaments(Tournaments)
-            console.log(Tournaments)
             toast.success('Juntou-se com sucesso!')
         }
 
@@ -133,33 +132,17 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
         setLoading(false)
     }
 
-
     return (
         <div className="w-full h-full flex justify-center items-center">
             <div className="h-[40%] w-[30%] flex flex-col justify-center items-center bg-zinc-700 gap-8">
                 {creating ?
                     <div className=" w-full h-full p-4 flex flex-col justify-center items-center gap-4">
-                        <span className="text-2xl font-bold">Criar torneio</span>
-                        <form onSubmit={(e) => handleCreation(e)} className="flex flex-col items-center gap-4 w-full h-full">
-                            <label htmlFor="name">
-                                Name:
-                                <input type="text" maxLength={25} className="bg-zinc-500 h-12 w-full text-2xl text-center font-semibold cursor-text" value={tournamentName} onChange={(e) => setTournamentName(e.target.value)} name="name" id="name" />
-                            </label>
-                            <label htmlFor="public" className="flex flex-row gap-4 ">
-                                Torneio público?
-                                <Checkbox changeFunction={setPublicTournament} identifier="public" />
-                            </label>
-                            <Button className="w-40 h-8 text-lg" type="submit">Criar torneio</Button>
-                        </form>
+                        <CreateNewTournament changeNameFunction={setTournamentName} tournamentName={tournamentName} handlePublic={setPublicTournament} handleSubmit={handleCreation}/>
                         <Button className="w-40 h-8 text-lg bg-zinc-600" onClick={() => { setCreation(false) }}>Digitar código</Button>
                     </div>
                     :
                     <>
-                        <span className="text-2xl font-bold">Digite o código do torneio</span>
-                        <form onSubmit={(e) => { handleEnter(e) }} className="flex flex-col items-center gap-4">
-                            <input type="number" className="bg-zinc-500 h-20 w-48 text-2xl text-center font-semibold" value={code} onChange={(e) => { setCode(e.target.value) }} />
-                            <Button className="w-40 h-8 text-lg">Entrar</Button>
-                        </form>
+                        <JoinTournament changeCode={setCode} code={code} handleSubmit={handleEnter}/>
                         <Button className="w-40 h-8 text-lg bg-zinc-600" onClick={() => { setCreation(true) }}>Criar torneio</Button>
                     </>
                 }

@@ -72,6 +72,7 @@ export type Database = {
           isAdmin: boolean
           joinned_at: string
           name: string
+          photo_url: string
           tournament_id: number
         }
         Insert: {
@@ -84,6 +85,7 @@ export type Database = {
           isAdmin?: boolean
           joinned_at?: string
           name: string
+          photo_url?: string
           tournament_id: number
         }
         Update: {
@@ -96,6 +98,7 @@ export type Database = {
           isAdmin?: boolean
           joinned_at?: string
           name?: string
+          photo_url?: string
           tournament_id?: number
         }
         Relationships: [

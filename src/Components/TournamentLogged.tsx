@@ -2,10 +2,9 @@ import { useEffect, useState } from "react"
 import { supabase } from "../helpers/utils"
 import NoTournament from "./noTournament"
 import { User } from '@supabase/supabase-js';
-import Podium from "./ui/Podium";
 import { Tables } from "../helpers/supabase";
 import { toast } from 'react-toastify';
-import { Plus, Trophy, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Button } from "./ui/button";
 import * as Dialog from '@radix-ui/react-dialog';
 import SelectElement from "./ui/select";
@@ -17,18 +16,20 @@ interface tournamentLoged {
     setLoader: Function,
     seasons: Array<Tables<'seasons'>>,
     competitors: Array<Tables<'competitors'>>,
+    tournaments: Array<Tables<'tournaments'>>,
+    setTournaments:Function
 }
 
 interface results {
     competitorId: number,
     wins: number,
     losses: number,
-    competitorName: string
+    competitorName: string,
+    photoUrl:string,
 }
 
-export default function TournamentLogged({ userSession, setLoader, seasons, competitors }: tournamentLoged) {
+export default function TournamentLogged({ userSession, setLoader, seasons, competitors, setTournaments,tournaments}: tournamentLoged) {
 
-    const [tournaments, setTournaments] = useState<Array<any>>([1])
     const [currentSeasonResults, setCurrentSeasonResults] = useState<Array<results>>([])
     const [newDuelModal, setNewDuelModal] = useState(false)
 
@@ -59,7 +60,7 @@ export default function TournamentLogged({ userSession, setLoader, seasons, comp
             return competitor.competitor_id === id
         })
 
-        return competitor[0]?.name
+        return [competitor[0]?.name, competitor[0]?.photo_url]
     }
 
     async function sortBattles(battles: Tables<'battles'>[]) {
@@ -92,7 +93,8 @@ export default function TournamentLogged({ userSession, setLoader, seasons, comp
             competitorId,
             wins: stats.wins,
             losses: stats.losses,
-            competitorName: getCompetitorName(competitorId)
+            competitorName: getCompetitorName(competitorId)[0] || '',
+            photoUrl:getCompetitorName(competitorId)[1] || ''
         }));
 
 
@@ -132,13 +134,13 @@ export default function TournamentLogged({ userSession, setLoader, seasons, comp
         return sorted
     }
 
-    // useEffect(() => {
-    //     if(userSession){
-    //         getTournaments().then((tournaments: any) => {
-    //             setTournaments(tournaments)
-    //         })
-    //     }
-    // }, [userSession])
+    useEffect(() => {
+        if(userSession && tournaments.length === 0){
+            getTournaments().then((tournaments: any) => {
+                setTournaments(tournaments)
+            })
+        }
+    }, [userSession])
 
     useEffect(() => {
         if (seasons.length > 0 && currentSeasonResults.length === 0) {
@@ -186,7 +188,6 @@ export default function TournamentLogged({ userSession, setLoader, seasons, comp
 
     async function createNewDuel() {
         setLoader(true)
-        console.log('createnewduel')
         const { error } = await supabase.from('battles').insert({
             first_competitor: parseInt(firstCompetitorId),
             second_competitor: parseInt(SecondCompetitorId),

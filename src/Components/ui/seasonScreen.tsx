@@ -5,7 +5,8 @@ interface results {
     competitorId: number,
     wins: number,
     losses: number,
-    competitorName: string
+    competitorName: string,
+    photoUrl:string
 }
 
 
@@ -40,7 +41,7 @@ export default function SeasonScreen({ seasonResults }: { seasonResults: Array<r
                             </tr>
                         </thead>
 
-                        <tbody className="w-full h-full bg-red-500 ">
+                        <tbody className="w-full h-full ">
                             {seasonResults?.slice(countPodium()).map((competitor: results, index: number) => {
                                 return (
                                     <tr className=" cursor-pointer text-center bg-[#1b1f33] h-[2.5rem] hover:bg-[#242a45]" key={index}>
@@ -51,7 +52,7 @@ export default function SeasonScreen({ seasonResults }: { seasonResults: Array<r
                                             </div>
                                         </td>
                                         <td className="capitalize">{competitor.competitorName}</td>
-                                        <td className="rounded-tr-lg rounded-br-lg">{competitor.wins}</td>
+                                        <td >{competitor.wins}</td>
                                         <td className="rounded-tr-lg rounded-br-lg">{competitor.losses}</td>
                                     </tr>
                                 )

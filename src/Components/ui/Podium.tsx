@@ -5,7 +5,8 @@ interface place {
     competitorName: string,
     position: 'First' | 'Second' | 'Third',
     wins:number
-    losses:number
+    losses:number,
+    photoUrl:string
 }
 
 interface podium{
@@ -13,26 +14,29 @@ interface podium{
         competitorId: number,
         wins: number,
         losses: number,
-        competitorName: string
+        competitorName: string,
+        photoUrl:string
     },
     second:{
         competitorId: number,
         wins: number,
         losses: number,
-        competitorName: string
+        competitorName: string,
+        photoUrl:string
     },
     third:{
         competitorId: number,
         wins: number,
         losses: number,
-        competitorName: string
+        competitorName: string,
+        photoUrl:string
     },
 }
 
 
 
 export default function Podium({first,second,third}:podium) {
-    const Place = ({ competitorName, position,losses,wins }: place) => {
+    const Place = ({ competitorName, position,losses,wins,photoUrl }: place) => {
 
         let crownColor = '';
         let translate = '';
@@ -53,8 +57,8 @@ export default function Podium({first,second,third}:podium) {
         }
 
         let style = {
-            backgroundImage: `url(https://i.pinimg.com/736x/d1/46/7b/d1467b8103a9e846b1a7605d169c9f5e.jpg)`,
-            backgroundSize: 'contain',
+            backgroundImage: `url(${photoUrl})`,
+            backgroundSize: 'cover',
             backgroundPosition: 'center',
         }
 
@@ -87,9 +91,9 @@ export default function Podium({first,second,third}:podium) {
 
     return (
         <div className='w-full h-full flex flex-row  justify-center'>
-            {second ? <Place competitorName={second?.competitorName} wins={second?.wins} losses={second?.losses} position='Second' /> : ''}
-            {first ?  <Place competitorName={first?.competitorName} wins={first?.wins}  losses={first?.losses} position='First' /> : ''}
-            {third ? <Place competitorName={third?.competitorName} wins={third?.wins}  losses={third?.losses} position='Third' /> :''}
+            {second ? <Place competitorName={second?.competitorName} wins={second?.wins} losses={second?.losses} position='Second' photoUrl={second?.photoUrl} /> : ''}
+            {first ?  <Place competitorName={first?.competitorName} wins={first?.wins}  losses={first?.losses} position='First' photoUrl={first?.photoUrl}/> : ''}
+            {third ? <Place competitorName={third?.competitorName} wins={third?.wins}  losses={third?.losses} position='Third' photoUrl={third?.photoUrl}/> :''}
         </div>
     )
 }
