@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Button } from "./ui/button"
 import { supabase } from "../helpers/utils"
 import { toast } from 'react-toastify';
@@ -6,7 +6,8 @@ import { Tables } from "../helpers/supabase";
 import { User } from "@supabase/supabase-js";
 import CreateNewTournament from "./ui/createNewTournament";
 import JoinTournament from "./ui/joinTournament";
-export default function NoTournament({ setTournaments, setLoading, userSession }: { setTournaments: Function, setLoading: Function, userSession: User }) {
+
+export default function NoTournament({ setTournaments, setLoading, userSession, searchParamsCode }: { setTournaments: Function, setLoading: Function, userSession: User, searchParamsCode:string | null }) {
 
     const [code, setCode] = useState('')
     const [creating, setCreation] = useState(false)
@@ -63,7 +64,7 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
                     }
                 }
             } else {
-                toast.error('Seu email não consta na lista de convidados ou você já está nesse torneio. Por favor, entre em contato com um administrador do torneio')
+                toast.error('Seu email não consta na lista de convidados ou você já está nesse torneio. Por favor, entre em contato com um administrador')
                 return
             }
         }
@@ -132,6 +133,12 @@ export default function NoTournament({ setTournaments, setLoading, userSession }
         setLoading(false)
     }
 
+    useEffect(() =>{
+        if(searchParamsCode){
+            setCode(searchParamsCode)
+        }
+    },[])
+    
     return (
         <div className="w-full h-full flex justify-center items-center">
             <div className="h-[40%] w-[30%] flex flex-col justify-center items-center bg-zinc-700 gap-8">

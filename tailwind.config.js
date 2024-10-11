@@ -12,6 +12,8 @@ export default {
 
         // Complex site-specific column configuration
         'cards': 'repeat(auto-fit, 10rem)',
+
+        'brackets': 'repeat(auto-fit, minmax(13rem, 1fr))',
       }
     },
     keyframes:{

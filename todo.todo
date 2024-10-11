@@ -9,7 +9,7 @@
 ✔ Importar dados para o banco de dados em BATTLES @done(24-10-09 10:34)
 ✔ Criar leaderboard dos colocados @done(24-10-09 12:01)
 ✔ Criar funcao de adicionar batalha @done(24-10-09 16:58)
-☐ Criar tabela de vitórias
+✔ Criar tabela de vitórias @done(24-10-10 21:15)
 ✘ Criar página de perfil (https://dribbble.com/shots/24080974-Settings-Profile-Page) @cancelled(24-10-09 23:00)
 ✔ Criar seasons @done(24-10-09 22:23)
 ✔ Criar função de criar novo torneio @done(24-10-10 11:43)
@@ -21,7 +21,19 @@
 ✔ Passar em todos os useEffect e adicionar uma condição extra de verificação @done(24-10-10 15:44)
 ✔ Adicionar comentarios para os estados @done(24-10-10 16:01)
 ✔ Remover console.log @done(24-10-10 15:42)
-☐ Adicionar codigo do torneio 
+✔ Adicionar codigo do torneio @done(24-10-10 18:53)
+✔ adicionar query param para o codigo @done(24-10-10 21:47)
+✔ caso a pessoa ja tenha o duelo, nao exibir a tela de entrar no duelo @done(24-10-10 23:09)
+✔ opcao de editar duelo @done(24-10-10 22:51)
+✔ rever funcoes de admin @done(24-10-11 12:24)
+✔ oned busca os duelistas, buscar somente os nao deleted @done(24-10-11 14:05)
+✔ colocar coluna de ativo @done(24-10-11 14:05)
 
 ----bugs---
-☐ imagem nao alterando no edit
+✔ imagem nao alterando no edit @done(24-10-11 13:34)
+✔ deletar competidor @done(24-10-10 21:22)
+☐ Brackets estao renderizando a todo momento por algum motivo, ainda que os dados nao estejam alterando. ja tentei usar react.memo
+✔ nao atualizando dps que salva duelo @done(24-10-11 12:23)
+
+----PENSAR E ANALISAR---
+✔ o que acontece se eu deletar um competidor que tem batalha? talvez criar um ENUM de deleted @done(24-10-11 14:05)

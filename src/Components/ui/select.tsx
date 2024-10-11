@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as Select from "@radix-ui/react-select";
 import classnames from "classnames";
 
@@ -29,6 +29,7 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
 );
 
 export default function SelectElement({ values, changeFunction, placeholder,label }: { values: Array<Tables<'competitors'> | number>, changeFunction:Function, placeholder:string, label:string}) {
+    
     return (
         <Select.Root onValueChange={(e) => changeFunction(e)} >
             <Select.Trigger className="SelectTrigger capitalize min-w-44 relative" aria-label="competitor">

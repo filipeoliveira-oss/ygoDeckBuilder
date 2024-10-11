@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { supabase } from "../helpers/utils"
 import NoTournament from "./noTournament"
 import { User } from '@supabase/supabase-js';
@@ -10,6 +10,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import SelectElement from "./ui/select";
 import SeasonAccordion from "./ui/seasonAccordion";
 import SeasonScreen from "./ui/seasonScreen";
+import Brackets from "./ui/brackets";
 
 interface tournamentLoged {
     userSession: User,
@@ -18,6 +19,8 @@ interface tournamentLoged {
     competitors: Array<Tables<'competitors'>>,
     tournaments: Array<Tables<'tournaments'>>,
     setTournaments:Function
+    duelCode:string | null,
+    userTournaments:Array<Tables<'tournaments'>>
 }
 
 interface results {
@@ -28,9 +31,10 @@ interface results {
     photoUrl:string,
 }
 
-export default function TournamentLogged({ userSession, setLoader, seasons, competitors, setTournaments,tournaments}: tournamentLoged) {
-
+export default function TournamentLogged({ userSession, setLoader, seasons, competitors, setTournaments,tournaments,duelCode,userTournaments}: tournamentLoged) {
+    
     const [currentSeasonResults, setCurrentSeasonResults] = useState<Array<results>>([])
+    const [duels, setDuels] = useState<Tables<'battles'>[]>([]) 
     const [newDuelModal, setNewDuelModal] = useState(false)
 
     //New Duel
@@ -115,10 +119,11 @@ export default function TournamentLogged({ userSession, setLoader, seasons, comp
         return sorted
     }
 
+
     async function getCurrentSeasonBattles(seasonId:number) {
         setLoader(true)
 
-        const { data, error } = await supabase.from('battles').select().eq("season_id", seasonId)
+        const { data, error } = await supabase.from('battles').select().eq("season_id", seasonId).order("created_at",{ascending:true})
 
         if (error) {
             setLoader(false)
@@ -126,12 +131,12 @@ export default function TournamentLogged({ userSession, setLoader, seasons, comp
             return
         }
 
-        setLoader(false)
         const sorted = await sortBattles(data).then((res) =>{
-            return res
-
+            return res    
         })
-        return sorted
+        setCurrentSeasonResults(sorted)
+        setDuels(data)
+        setLoader(false)
     }
 
     useEffect(() => {
@@ -143,39 +148,10 @@ export default function TournamentLogged({ userSession, setLoader, seasons, comp
     }, [userSession])
 
     useEffect(() => {
-        if (seasons.length > 0 && currentSeasonResults.length === 0) {
-            getCurrentSeasonBattles(seasons[0].season_id).then((res) =>{
-                if(res){
-                    setCurrentSeasonResults(res)
-                }
-            })
-
+        if ((seasons.length > 0 && currentSeasonResults.length === 0 && duels.length === 0)) {
+            getCurrentSeasonBattles(seasons[0].season_id)
         }
     }, [seasons])
-
-
-
-    const HasTournament = () => {
-        return (
-            <div className="w-full h-full flex flex-row gap-4 px-4">
-                <div className="h-full w-[50%] flex flex-col rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0 border border-zinc-400">
-                    <div className='flex w-full h-8 items-center gap-4 deckHeader rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0 justify-between px-4 '>
-                        <h1 className='font-semibold text-base tracking-tight leading-normal'>{seasons[0]?.season_name}</h1>
-                        <div className="flex flex-row gap-2 cursor-pointer" onClick={() => { setNewDuelModal(true) }}>
-                            <Plus />
-                            <span>Novo duelo</span>
-                        </div>
-                    </div>
-
-                    <SeasonScreen seasonResults={currentSeasonResults}/>
-                </div>
-
-                <div className="h-full w-[50%] flex flex-col rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0 border border-zinc-400">
-                    <SeasonAccordion seasons={seasons.slice(1)} setLoader={setLoader} competitors={competitors}/>
-                </div>
-            </div>
-        )
-    }
 
     function closeNewDuel() {
         setNewDuelModal(false)
@@ -184,7 +160,6 @@ export default function TournamentLogged({ userSession, setLoader, seasons, comp
         setFcompetitorResult(0)
         setScompetitorResult(0)
     }
-
 
     async function createNewDuel() {
         setLoader(true)
@@ -203,17 +178,57 @@ export default function TournamentLogged({ userSession, setLoader, seasons, comp
         }
 
         setLoader(false)
-        // getCurrentSeasonBattles()
+        getCurrentSeasonBattles(seasons[0].season_id)
         closeNewDuel()
         toast.success('Duelo inserido com sucesso')
 
     }
 
+    const BracketsScreen = React.memo(function BracketsScreen(){
+        return(
+            <>
+                {duels?.map((duel:Tables<'battles'>) =>{
+                    return(
+                        <React.Fragment key={duel.battle_id}>
+                            <Brackets duel={duel} competitors={competitors} setCurrentResults={getCurrentSeasonBattles}/>
+                        </React.Fragment>
+                    )
+                })}
+            </>
+        )
+    })
+
+    const HasTournament = () => {
+        return (
+            <div className="w-full h-full flex flex-row gap-4 px-4 overflow-hidden p-0 m-0">
+                <div className="h-full w-[50%] flex flex-col rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0 border border-zinc-400">
+                    <div className='flex w-full h-8 items-center gap-4 deckHeader rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0 justify-between px-4 '>
+                        <h1 className='font-semibold text-base tracking-tight leading-normal'>{seasons[0]?.season_name}</h1>
+                        <div className="flex flex-row gap-2 cursor-pointer" onClick={() => { setNewDuelModal(true) }}>
+                            <Plus />
+                            <span>Novo duelo</span>
+                        </div>
+                    </div>
+
+                    <SeasonScreen seasonResults={currentSeasonResults}/>
+
+                    <div className="w-full h-full overflow-y-auto grid grid-cols-brackets gap-y-8 gap-x-4 px-4 pb-2 ">
+                        <BracketsScreen/>
+                    </div>
+                </div>
+
+                <div className="h-full w-[50%] flex flex-col rounded-tl-2xl rounded-tr-2xl rounded-bl-0 rounded-br-0 border border-zinc-400">
+                    <SeasonAccordion seasons={seasons.slice(1)} setLoader={setLoader} competitors={competitors}/>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <>
-            <div className="h-full w-full flex flex-row gap-4">
-                {tournaments && tournaments?.length > 0 ?
-                    <HasTournament /> : <NoTournament setLoading={setLoader} setTournaments={setTournaments} userSession={userSession} />
+            <div className="h-full w-full flex flex-row gap-4 overflow-hidden">
+                {userTournaments && userTournaments?.length > 0 ?
+                    <HasTournament /> : <NoTournament setLoading={setLoader} setTournaments={setTournaments} userSession={userSession} searchParamsCode={duelCode}/>
                 }
             </div>
 
@@ -224,13 +239,12 @@ export default function TournamentLogged({ userSession, setLoader, seasons, comp
                         <Dialog.Title className="DialogTitle text-white">Adicionar novo duelo</Dialog.Title>
                         <div className="mt-4 w-full h-fit justify-between items-center flex">
                             <div className="flex flex-col gap-4">
-                                <SelectElement values={competitors} changeFunction={setfirstCompetitorId} placeholder="Selecione o competidor 1" label="Duelistas" />
+                                <SelectElement values={competitors.filter((competitor:Tables<'competitors'>) => {return competitor.competitor_status !== "DELETED"})} changeFunction={setfirstCompetitorId} placeholder="Selecione o competidor 1" label="Duelistas" />
                                 <SelectElement values={[0, 1, 2]} changeFunction={setFcompetitorResult} placeholder="Resultado do competidor 1" label="Rounds ganhos" />
-
                             </div>
                             <X />
                             <div className="flex flex-col gap-4">
-                                <SelectElement values={competitors} changeFunction={setSecondCompetitorId} placeholder="Selecione o competidor 2" label="Duelistas" />
+                                <SelectElement values={competitors.filter((competitor:Tables<'competitors'>) => {return competitor.competitor_status !== "DELETED"})} changeFunction={setSecondCompetitorId} placeholder="Selecione o competidor 2" label="Duelistas" />
                                 <SelectElement values={[0, 1, 2]} changeFunction={setScompetitorResult} placeholder="Resultado do competidor 2" label="Rounds ganhos" />
                             </div>
                         </div>

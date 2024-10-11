@@ -13,8 +13,13 @@ import { supabase } from '../../helpers/utils';
 import { Session } from '@supabase/supabase-js';
 import { useSetRecoilState } from 'recoil';
 import { isAdminAtom } from '../../helpers/atoms';
+import { useSearchParams } from 'react-router-dom';
 
 export default function Tournament() {
+
+    //search params
+    const [searchParams] = useSearchParams();
+    const duelCode = searchParams.get('code');
 
     //Loader
     const [loader, setLoader] = useState(false)
@@ -51,7 +56,7 @@ export default function Tournament() {
     async function getUsersByTournament() {
         setLoader(true)
 
-        const {data, error} = await supabase.from('competitors').select().eq('tournament_id', tournamentId)
+        const {data, error} = await supabase.from('competitors').select().eq('tournament_id', tournamentId).order('joinned_at', {ascending:true})
 
         if(error){
             setLoader(false)
@@ -93,7 +98,6 @@ export default function Tournament() {
         if(!session){
             supabase.auth.getSession().then(({ data: { session } }) => {
                 setSession(session)
-                console.log(session)
             })
     
             const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -167,7 +171,7 @@ export default function Tournament() {
                 <ScreenLoader/>
             </div>
             <ToastContainer />
-            <div className='flex flex-1 flex-col relative h-[100dvh]'>
+            <div className='flex flex-1 flex-col relative h-[100dvh] p-0 m-0'>
                 {session /*LOGGED*/ ?
                     <>  
                         <TournamentHeader
@@ -184,8 +188,18 @@ export default function Tournament() {
                             setLoader={setLoader}
                             setSeasons={setSeasons}
                             setTournaments={setTournaments}
+                            duelCode={duelCode}
                         />
-                        <TournamentLogged userSession={session.user} setLoader={setLoader} seasons={seasons} competitors={competitors} setTournaments={setTournaments} tournaments={tournaments}/>
+                        <TournamentLogged 
+                            userSession={session.user} 
+                            setLoader={setLoader} 
+                            seasons={seasons} 
+                            competitors={competitors} 
+                            setTournaments={setTournaments} 
+                            tournaments={tournaments} 
+                            duelCode={duelCode}
+                            userTournaments={userTournaments}
+                        />
                     </>
                     :
                     <AuthForm />

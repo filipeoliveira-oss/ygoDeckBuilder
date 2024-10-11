@@ -24,8 +24,8 @@ export default function SeasonScreen({ seasonResults }: { seasonResults: Array<r
     }
 
     return (
-        <div className="w-full h-full flex flex-col mb-4">
-            <div className="w-full h-[32%] p-4 flex overflow-hidden mt-4">
+        <div className="w-full h-fit max-h-[100%] flex flex-col mb-4">
+            <div className="w-full h-fit p-4 flex overflow-hidden mt-4 ">
                 {seasonResults && <Podium first={seasonResults[0]} second={seasonResults[1]} third={seasonResults[2]} />}
             </div>
 

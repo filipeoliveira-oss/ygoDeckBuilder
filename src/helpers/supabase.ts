@@ -178,7 +178,7 @@ export type Database = {
       }
     }
     Enums: {
-      competitor_status: "WAPPR" | "APPR"
+      competitor_status: "WAPPR" | "APPR" | "DELETED"
       season_status: "CURRENT" | "OLD"
     }
     CompositeTypes: {

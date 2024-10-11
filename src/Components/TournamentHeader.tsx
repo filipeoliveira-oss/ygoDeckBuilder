@@ -3,7 +3,7 @@ import { Action } from "./ui/headerAction";
 import { useNavigate } from "react-router-dom";
 import * as Dialog from '@radix-ui/react-dialog';
 import { Button } from "./ui/button";
-import { Check, LogOut, Pencil, Trash, WalletCards, X } from "lucide-react";
+import { Check, LogOut, Pencil, Trash, UserCheck, WalletCards, X } from "lucide-react";
 import { Tables } from "../helpers/supabase";
 import { supabase } from "../helpers/utils";
 import Checkbox from "./ui/checkbox";
@@ -27,13 +27,28 @@ interface tournamentHeader {
     setTournamentName: Function,
     setLoader: Function,
     setSeasons: Function,
-    setTournaments: Function
+    setTournaments: Function,
+    duelCode: string | null
 }
 
-export default function TournamentHeader({ competitors, tournamentId, setCompetitors, userSession, setTournamentId, userTournaments, tournamentName, tournamentDetail, setUserTournaments, setTournamentName, setLoader, setSeasons, setTournaments }: tournamentHeader) {
+export default function TournamentHeader({
+    competitors,
+    tournamentId,
+    setCompetitors,
+    userSession,
+    setTournamentId,
+    userTournaments,
+    tournamentName,
+    tournamentDetail,
+    setUserTournaments,
+    setTournamentName,
+    setLoader,
+    setSeasons,
+    setTournaments,
+    duelCode }: tournamentHeader) {
 
     const navigate = useNavigate()
-    
+
     //Modal
     const [modalController, setModalController] = useState({
         competitorsModal: false,
@@ -44,7 +59,7 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
         newSeasonModal: false,
         newPhotoModal: false
     })
-    
+
     //Add Competitor
     const [newCompetitorName, setNewCompetitorName] = useState('')
     const [newCompetitorEmail, setNewCompetitorEmail] = useState('')
@@ -64,7 +79,7 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
     const [competitorToDelete, setCompetitorToDelete] = useState<Tables<'competitors'> | null>(null)
     const [competitorToEdit, setCompetitorToEdit] = useState<any>()
     const isAdmin = useRecoilValue(isAdminAtom)
-    
+
     useEffect(() => {
         if (tournamentDetail && newNameTournament === '') {
             setNewNameTournament(tournamentDetail?.tournament_name)
@@ -84,7 +99,7 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
             isAdmin: newCompetitorAdmin,
             competitor_email: newCompetitorEmail,
             competitor_status: "WAPPR",
-            photo_url:newCompetitorPhotoUrl
+            photo_url: newCompetitorPhotoUrl
 
         }).select()
 
@@ -103,7 +118,7 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
             competitor_status: data[0].competitor_status,
             competitor_id: data[0].competitor_id,
             joinned_at: data[0].joinned_at,
-            photo_url:newCompetitorPhotoUrl
+            photo_url: newCompetitorPhotoUrl
         }])
 
         setNewCompetitorAdmin(false)
@@ -120,8 +135,29 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
             return
         }
         setLoader(true)
-        await supabase.from('competitors').delete().eq("competitor_id", competitorToDelete.competitor_id)
+
+        const {error} = await supabase.from('competitors').update({
+            competitor_status: competitorToDelete.competitor_status === 'DELETED'? 'WAPPR' : 'DELETED'
+        }).eq('competitor_id', competitorToDelete.competitor_id)
+
+        if (error) {
+            toast.error('Ocorreu um erro na deleção, tente novamente')
+            setLoader(false)
+            console.log(error)
+            return
+        }
+
+        let index = competitors.findIndex((competitor:Tables<'competitors'>) =>{
+            return competitor.competitor_id === competitorToDelete.competitor_id
+        })
+
+        let competitorAux = [...competitors]
+        competitorAux[index].competitor_status = competitorToDelete.competitor_status === 'DELETED'? 'WAPPR' : 'DELETED'
+        setCompetitors(competitorAux)
+
+        setCompetitorToDelete(null)
         setLoader(false)
+        setModalController({ ...modalController, deleteCompetitorModal: false })
         toast.success('O competidor foi deletado com sucesso')
     }
 
@@ -138,7 +174,7 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
             collection: competitorToEdit.collection,
             competitor_email: competitorToEdit.competitor_email,
             isAdmin: competitorToEdit.isAdmin,
-            photo_url:competitorToEdit.photo_url
+            photo_url: competitorToEdit.photo_url
         }).eq("competitor_id", competitorToEdit.competitor_id)
 
         const { data, error: tError } = await supabase.from('competitors').select().eq('tournament_id', tournamentId)
@@ -263,23 +299,54 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
         const fileName = `${newCompetitorEmail || competitorToEdit.competitor_email}-${tournamentId}.${fileExt}`
 
         setSendingPhoto(true)
-        
-        const { data, error } = await supabase.storage.from('competitorsPhoto').upload(fileName, newCompetitorPhoto, {
-            cacheControl: '3600',
-            upsert: true
-        })
 
-        if (error) {
-            toast.error('Ocorreu um erro no envio da foto, tente novamente')
-            return
+        if (modalController.editCompetitorModal) {
+
+            const { data, error } = await supabase
+                .storage
+                .from('competitorsPhoto')
+                .remove([fileName])
+
+            const { data:uploadData, error:uploadError } = await supabase.storage.from('competitorsPhoto').upload(fileName, newCompetitorPhoto, {
+                // cacheControl: '3600',
+                upsert: true
+            })
+
+            if(error || uploadError){
+                toast.error('Ocorreu um erro na troca da foto, tente novamente')
+                setSendingPhoto(false)
+                return
+            }
+
+            if(uploadData){
+                toast.success('Foto atualizada com sucesso')
+            }
+
+            setCompetitorToEdit({ ...competitorToEdit, photo_url: `` });
+
+            setTimeout(() => {
+                setCompetitorToEdit({ ...competitorToEdit, photo_url: `https://ilqwiwhhbfwxvrhhfkuz.supabase.co/storage/v1/object/public/competitorsPhoto/${uploadData?.path}` });
+            }, 500);
+
+        } else {
+            const { data, error } = await supabase.storage.from('competitorsPhoto').upload(fileName, newCompetitorPhoto, {
+                // cacheControl: '3600',
+                upsert: true
+            })
+
+            if (error) {
+                toast.error('Ocorreu um erro no envio da foto, tente novamente')
+                setSendingPhoto(false)
+                return
+            }
+
+            setNewCompetitorPhotoUrl(`https://ilqwiwhhbfwxvrhhfkuz.supabase.co/storage/v1/object/public/competitorsPhoto/${data?.path}`)
         }
-
-        setNewCompetitorPhotoUrl(`https://ilqwiwhhbfwxvrhhfkuz.supabase.co/storage/v1/object/public/competitorsPhoto/${data?.path}?width=100&height=100`)
         setSendingPhoto(false)
     }
 
 
-    function clearNewCompetitorFields(){
+    function clearNewCompetitorFields() {
         setNewCompetitorName('')
         setNewCompetitorAdmin(false)
         setNewCompetitorCollection('')
@@ -288,14 +355,28 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
         setNewCompetitorPhotoUrl('')
     }
 
+    function handleTournamentCopy() {
+        //https://ygodeckbuildercoheso.netlify.app/
+        navigator.clipboard.writeText(`https://ygodeckbuildercoheso.netlify.app/tournaments?code=${String(tournamentId)}`)
+        toast.success('Código de torneio copiado')
+    }
+
     return (
         <div className="flex flex-row justify-center items-center px-4">
-            <span className="absolute left-4">{tournamentName}</span>
+            <span className="absolute left-4 font-semibold capitalize cursor-pointer" onClick={() => handleTournamentCopy()}>{tournamentName} - {tournamentId}</span>
             <div className="flex items-center justify-center px-2 h-12 gap-4">
                 <Action onClick={() => { navigate('/') }}>Deck builder</Action>
                 <Action onClick={() => { setModalController({ ...modalController, competitorsModal: true }) }}>Competidores</Action>
                 {isAdmin && <Action onClick={() => { setModalController({ ...modalController, tournamentModal: true }) }}>Gerenciar torneio</Action>}
-                <TournamentDropdown setTournamentId={setTournamentId} userTournaments={userTournaments} tournamentId={tournamentId} userSession={userSession} setLoader={setLoader} setTournaments={setTournaments} />
+                <TournamentDropdown
+                    setTournamentId={setTournamentId}
+                    userTournaments={userTournaments}
+                    tournamentId={tournamentId}
+                    userSession={userSession}
+                    setLoader={setLoader}
+                    setTournaments={setTournaments}
+                    duelCode={duelCode}
+                />
             </div>
             <div className="cursor-pointer absolute right-4 flex flex-row gap-4" onClick={() => signOutCompetitor()}>
                 <LogOut />
@@ -318,6 +399,7 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
                                             <td className="border-r border-zinc-500">Deck</td>
                                             <td className="border-r border-zinc-500">Admin?</td>
                                             <td className="border-r border-zinc-500">Aceito?</td>
+                                            <td className="border-r border-zinc-500">Ativo?</td>
                                             {isAdmin && <td className="border-r border-zinc-500">Ações</td>}
                                         </tr>
                                     </thead>
@@ -340,11 +422,12 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
                                                     </td>
                                                     <td className="border-r border-zinc-500 items-center justify-center"><div className="w-full h-full flex items-center justify-center">{competitor.isAdmin ? <Check /> : <X />}</div></td>
                                                     <td className="border-r border-zinc-500 items-center justify-center "><div className="w-full h-full flex items-center justify-center">{competitor.competitor_status === 'APPR' ? <Check /> : <X />}</div></td>
+                                                    <td className="border-r border-zinc-500 items-center justify-center "><div className="w-full h-full flex items-center justify-center">{competitor.competitor_status === 'DELETED' ? <X />: <Check />}</div></td>
                                                     {isAdmin &&
                                                         <td>
                                                             <div className="flex flex-row gap-4 items-center justify-center">
                                                                 <span className="cursor-pointer" onClick={() => { setCompetitorToEdit(competitor), setModalController({ ...modalController, editCompetitorModal: true }) }}><Pencil /></span>
-                                                                <span className="cursor-pointer" onClick={() => { setCompetitorToDelete(competitor), setModalController({ ...modalController, deleteCompetitorModal: true }) }}><Trash /></span>
+                                                                <span className="cursor-pointer" onClick={() => { setCompetitorToDelete(competitor), setModalController({ ...modalController, deleteCompetitorModal: true }) }}>{competitor.competitor_status === 'DELETED'? <UserCheck/> : <Trash/>}</span>
                                                             </div>
                                                         </td>
                                                     }
@@ -411,7 +494,7 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
                             </label>
 
                             <div className='w-full h-fit min-h-8 flex justify-end gap-4 mt-4'>
-                                <Button aria-label="Close" onClick={() => { setModalController({ ...modalController, addCompetitorModal: false, competitorsModal: true }),clearNewCompetitorFields() }} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
+                                <Button aria-label="Close" onClick={() => { setModalController({ ...modalController, addCompetitorModal: false, competitorsModal: true }), clearNewCompetitorFields() }} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
                                     Cancelar
                                 </Button>
 
@@ -424,7 +507,7 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
 
 
                         <Dialog.Close asChild>
-                            <button className="IconButton" aria-label="Close" onClick={() => { setModalController({ ...modalController, addCompetitorModal: false, competitorsModal: true }),clearNewCompetitorFields() }}>
+                            <button className="IconButton" aria-label="Close" onClick={() => { setModalController({ ...modalController, addCompetitorModal: false, competitorsModal: true }), clearNewCompetitorFields() }}>
                                 <X />
                             </button>
                         </Dialog.Close>
@@ -436,16 +519,15 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
                 <Dialog.Portal>
                     <Dialog.Overlay className="DialogOverlay " />
                     <Dialog.Content className="DialogContent bg-zinc-700 text-white border-2 border-violet-500">
-                        <Dialog.Title className="DialogTitle text-white">Deletar competidor</Dialog.Title>
+                        <Dialog.Title className="DialogTitle text-white">{competitorToDelete?.competitor_status === 'DELETED'? 'Reativar competidor': 'Desativar competidor' }</Dialog.Title>
 
                         <Dialog.Description>
-                            Após a exclusão, essa ação não pode ser desfeita <br />
-                            Você tem certeza que deseja excluir o competidor: <strong>{competitorToDelete?.name} </strong>
+                            Você tem certeza que deseja {competitorToDelete?.competitor_status === 'DELETED'? 'reativar': 'desativar' } o competidor: <strong>{competitorToDelete?.name} </strong>
                         </Dialog.Description>
 
                         <div className='w-full h-fit min-h-8 flex justify-end gap-4 mt-4'>
                             <Button aria-label="Close" onClick={() => { handleDelete() }} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
-                                Deletar competidor
+                                {competitorToDelete?.competitor_status === 'DELETED'? 'Reativar': 'Desativar' } competidor
                             </Button>
 
                             <Button aria-label="Close" onClick={() => { setCompetitorToDelete(null), setModalController({ ...modalController, deleteCompetitorModal: false }) }} className='h-12 flex text-center bg-violet-500 justify-center items-center p-1'>
@@ -466,7 +548,7 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
                 <Dialog.Portal>
                     <Dialog.Overlay className="DialogOverlay " />
                     <Dialog.Content className="DialogContent bg-zinc-700 text-white border-2 border-violet-500 w-96">
-                        <Dialog.Title className="DialogTitle text-white">Gerenciar competidor</Dialog.Title>
+                        <Dialog.Title className="DialogTitle text-white">Editar competidor</Dialog.Title>
 
                         <form onSubmit={(e) => { editCompetitor(e) }} className="mt-4 flex gap-4 flex-col">
                             <label htmlFor="name" className="flex flex-col gap-2">
@@ -608,7 +690,7 @@ export default function TournamentHeader({ competitors, tournamentId, setCompeti
 
                         <div className="flex flex-col gap-4">
                             <input type="file" onChange={handleFileChange} accept="image/*" /> <br />
-                            <Button onClick={() => handleUpload()}>{sendingPhoto ? <RingLoader size={20} color="#fff"/>: 'Enviar foto'}</Button>
+                            <Button onClick={() => handleUpload()}>{sendingPhoto ? <RingLoader size={20} color="#fff" /> : 'Enviar foto'}</Button>
                             {(newCompetitorPhotoUrl || competitorToEdit?.photo_url) && <img src={newCompetitorPhotoUrl || competitorToEdit?.photo_url} alt="Competitor photo" />}
                         </div>
 

@@ -67,7 +67,7 @@ export default function Podium({first,second,third}:podium) {
             wins === 0 && losses === 0 ? <></>
             : 
             <motion.div 
-                className={`rounded w-[30%] h-[100%] flex flex-col items-center`} 
+                className={`rounded w-[30%] h-full flex flex-col items-center`} 
                 style={{ marginTop:`${translate}rem` }}
                 // key={value}
                 // initial={{ opacity: 0, scale: 0.5, translateY: 0}}

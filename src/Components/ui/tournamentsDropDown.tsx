@@ -14,16 +14,25 @@ import { Tables } from '../../helpers/supabase';
 interface tournamentDropdow {
     // tournamentId:number,
     setTournamentId: Function,
-    userTournaments: Array<any>,
+    userTournaments: Array<userTournaments>,
     tournamentId: number,
-    setLoader:Function,
-    userSession:User,
-    setTournaments:Function
+    setLoader: Function,
+    userSession: User,
+    setTournaments: Function,
+    duelCode: string | null
 }
 
+interface userTournaments {
+    joinned_at: Date,
+    tournaments: {
+        active:boolean,
+        is_public:boolean
+        tournament_id:number
+        tournament_name:string
+    }
+}
 
-
-export default function TournamentDropdown({ setTournamentId, userTournaments, tournamentId,setLoader,userSession,setTournaments }: tournamentDropdow) {
+export default function TournamentDropdown({ setTournamentId, userTournaments, tournamentId, setLoader, userSession, setTournaments, duelCode }: tournamentDropdow) {
 
     const [selected, setSelected] = useState<number>(0)
     const [newTournamentModal, setNewTournamentModal] = useState(false)
@@ -132,7 +141,9 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
                     }
                 }
             } else {
-                toast.error('Seu email não consta na lista de convidados ou você já está nesse torneio. Por favor, entre em contato com um administrador do torneio')
+                setJoinTournamentModal(false)
+                setLoader(false)
+                toast.error('Seu email não consta na lista de convidados ou você já está nesse torneio. Por favor, entre em contato com um administrador')
                 return
             }
         }
@@ -160,6 +171,13 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
         setLoader(false)
     }
 
+    useEffect(() => {
+        if (duelCode) {
+            setJoinTournamentModal(true)
+            setJoinTournamentCode(duelCode)
+        }
+    }, [])
+
     return (
         <>
             <DropdownMenu.Root>
@@ -182,10 +200,10 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
                         </DropdownMenu.RadioGroup>
 
                         <DropdownMenu.Separator className="DropdownMenuSeparator" />
-                        
+
                         <span className="DropdownMenuRadioItem cursor-pointer" onClick={() => setJoinTournamentModal(true)}>Entrar em um torneio</span>
                         <span className="DropdownMenuRadioItem cursor-pointer" onClick={() => setNewTournamentModal(true)}>Criar novo torneio</span>
-                        
+
                         <DropdownMenu.Arrow className="DropdownMenuArrow" />
                     </DropdownMenu.Content>
                 </DropdownMenu.Portal>
@@ -195,10 +213,10 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
                 <Dialog.Portal>
                     <Dialog.Overlay className="DialogOverlay " />
                     <Dialog.Content className="DialogContent bg-zinc-700 text-white border-2 border-violet-500 w-96">
-                        
-                        <CreateNewTournament changeNameFunction={setNewTournamentName} handlePublic={setNewTournamentPublic} tournamentName={newTournamentName} handleSubmit={handleCreation}/>
+
+                        <CreateNewTournament changeNameFunction={setNewTournamentName} handlePublic={setNewTournamentPublic} tournamentName={newTournamentName} handleSubmit={handleCreation} />
                         <Dialog.Close asChild>
-                            <button className="IconButton" aria-label="Close" onClick={() => {setNewTournamentModal(false)}}>
+                            <button className="IconButton" aria-label="Close" onClick={() => { setNewTournamentModal(false) }}>
                                 <X />
                             </button>
                         </Dialog.Close>
@@ -210,12 +228,11 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
                 <Dialog.Portal>
                     <Dialog.Overlay className="DialogOverlay " />
                     <Dialog.Content className="DialogContent bg-zinc-700 text-white border-2 border-violet-500 w-96">
-                        
                         <div className='flex gap-4 flex-col'>
-                            <JoinTournament changeCode={setJoinTournamentCode} code={joinTournamentCode} handleSubmit={handleJointTournament}/>
+                            <JoinTournament changeCode={setJoinTournamentCode} code={joinTournamentCode} handleSubmit={handleJointTournament} />
                         </div>
                         <Dialog.Close asChild>
-                            <button className="IconButton" aria-label="Close" onClick={() => {setJoinTournamentModal(false)}}>
+                            <button className="IconButton" aria-label="Close" onClick={() => { setJoinTournamentModal(false) }}>
                                 <X />
                             </button>
                         </Dialog.Close>

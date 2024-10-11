@@ -51,7 +51,7 @@ if you simply want to use this module, you can just create an account and use it
 5. Run the files from ./src/supabase/*
 6. Go to Auth  => Providers and enable email and Discord
 7. Go to Storage => create a public bucket with the name `competitorsPhoto` and define the MIME types as `image/*`
-8.
+8. Crate a policie for insert(anon), update(anon) and select(public) 
 
 ## Built With
 
@@ -64,6 +64,7 @@ if you simply want to use this module, you can just create an account and use it
 * [papaparse](https://www.papaparse.com/) -  Powerful CSV Parser for JavaScript
 * [file-saver](https://github.com/eligrey/FileSaver.js#readme) - Solution to saving files on the client-side
 * [RecoilJS](https://recoiljs.org/) - A state management library for React
+* [Supabase](https://supabase.com/) - A state management library for React
 
 ## Acknowledgments
 
