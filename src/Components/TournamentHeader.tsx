@@ -359,7 +359,7 @@ export default function TournamentHeader({
 
     function handleTournamentCopy() {
         //https://ygodeckbuildercoheso.netlify.app/
-        navigator.clipboard.writeText(`https://ygodeckbuildercoheso.netlify.app/tournaments?code=${String(tournamentId)}`)
+        navigator.clipboard.writeText(`https://ygodeckbuildercoheso.netlify.app/tournament?code=${String(tournamentId)}`)
         toast.success('Código de torneio copiado')
     }
 
