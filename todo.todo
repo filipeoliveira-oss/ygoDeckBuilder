@@ -40,6 +40,8 @@
 ✔ adicionar mensagem de nao existem dados para as temporadas @done(24-10-14 15:04)
 ✔ mudar o nome da temporada para capitalized @done(24-10-14 14:56)
 ✘ order by nos dropdown de competidors @cancelled(24-10-14 14:53)
+☐ search param nao funciona em prod
+☐ e nao ta loadando quando entra
 
 ----PENSAR E ANALISAR---
 ✔ o que acontece se eu deletar um competidor que tem batalha? talvez criar um ENUM de deleted @done(24-10-11 14:05)

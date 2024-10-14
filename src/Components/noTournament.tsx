@@ -133,7 +133,6 @@ export default function NoTournament({ setTournaments, setLoading, userSession, 
             }
         }
 
-
         const { data: Tournaments, error: TournamentsError } = await supabase.from('competitors').select(`tournaments(tournament_id, tournament_name, active, is_public)`).eq('competitor_email', (userSession.email || ''))
 
         if (!TournamentsError) {
@@ -143,9 +142,6 @@ export default function NoTournament({ setTournaments, setLoading, userSession, 
             setTournamentName(TournamentData[0].tournament_name)
         }
 
-
-
-
         setLoading(false)
 
     }
@@ -154,7 +150,6 @@ export default function NoTournament({ setTournaments, setLoading, userSession, 
         if(searchParamsCode ){
             setCode(searchParamsCode)
         }
-
     },[])
     
     return (
