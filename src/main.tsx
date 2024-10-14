@@ -8,16 +8,14 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Tournament from './routes/tournament/app.tsx';
+import Tournament from './routes/tournament/App.tsx';
 
 
 const router = createBrowserRouter([
   {
     path:'/',
     element:(
-      <RecoilRoot>
         <App />
-      </RecoilRoot>
     )
   },
   {
@@ -27,8 +25,12 @@ const router = createBrowserRouter([
 ])
 
 
+
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <RecoilRoot>
+      <RouterProvider router={router} />
+    </RecoilRoot>
   </StrictMode>,
 )

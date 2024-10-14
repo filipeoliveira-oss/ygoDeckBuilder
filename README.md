@@ -40,6 +40,19 @@ Done, you have your Dev Environment up and running.
 
 ![screenshot](./public/main.png)
 
+## New Tournament Module
+
+if you simply want to use this module, you can just create an account and use it. Although, if you want to edit this part of code, a few steps must be followed
+
+1. You need to create an account on [Supabase](https://supabase.com/)
+2. After that, create a new project to host your database, auth and storage
+3. Once you have the project created, get the credentials and place them in a .env file to use across the app and follow the steps in the documentation to create the client
+4. Go to the Dashboard => SQL Editor
+5. Run the files from ./src/supabase/*
+6. Go to Auth  => Providers and enable email and Discord
+7. Go to Storage => create a public bucket with the name `competitorsPhoto` and define the MIME types as `image/*`
+8. Crate a policie for insert(anon), update(anon) and select(public) 
+
 ## Built With
 
 * [React](https://react.dev/) - The library for web and native user interfaces
@@ -51,6 +64,7 @@ Done, you have your Dev Environment up and running.
 * [papaparse](https://www.papaparse.com/) -  Powerful CSV Parser for JavaScript
 * [file-saver](https://github.com/eligrey/FileSaver.js#readme) - Solution to saving files on the client-side
 * [RecoilJS](https://recoiljs.org/) - A state management library for React
+* [Supabase](https://supabase.com/) - A state management library for React
 
 ## Acknowledgments
 

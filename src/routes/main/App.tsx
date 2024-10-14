@@ -25,7 +25,9 @@ export default function App() {
 		<>
 			<ShootingStars starWidth={20} starHeight={2} minDelay={3000} maxDelay={4200}/>
 			<StarsBackground starDensity={0.00130}/>
-			{screenLoader && <ScreenLoader/>}
+			<div style={screenLoader ? {} : {display:'none'}}>
+                <ScreenLoader/>
+            </div>
 			<ToastContainer  closeOnClick theme='dark' />
 			<div className='flex flex-col h-screen w-screen items-center overflow-hidden relative' >
 				<Header/>
