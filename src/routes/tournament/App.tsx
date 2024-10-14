@@ -13,7 +13,7 @@ import { supabase } from '../../helpers/utils';
 import { Session, User } from '@supabase/supabase-js';
 import { useSetRecoilState } from 'recoil';
 import { isAdminAtom } from '../../helpers/atoms';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 
 
@@ -194,7 +194,7 @@ export default function Tournament() {
                         providers={['discord']}
                         redirectTo='/tournament'
                     />
-                    <a className='text-zinc-400 text-center cursor-pointer pb-4' href='/'>Voltar para Yu-Gi-Oh Deck builder</a>
+                    <Link className='text-zinc-400 text-center cursor-pointer pb-4' href='/'>Voltar para Yu-Gi-Oh Deck builder</Link>
                 </div>
             </div>
         )

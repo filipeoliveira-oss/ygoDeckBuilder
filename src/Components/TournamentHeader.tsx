@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Action } from "./ui/headerAction";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Dialog from '@radix-ui/react-dialog';
 import { Button } from "./ui/button";
 import { Check, LogOut, Pencil, Trash, UserCheck, WalletCards, X } from "lucide-react";
@@ -418,9 +418,9 @@ export default function TournamentHeader({
                                                     <td className="border-r border-zinc-500">{competitor.name}</td>
                                                     <td className="border-r border-zinc-500">{competitor.competitor_email}</td>
                                                     <td className="border-r border-zinc-500">
-                                                        <a href={competitor.collection || '/'} className="flex justify-center" target="_blank" rel="noopener noreferrer">
+                                                        <Link to={competitor.collection || '#'} className="flex justify-center" target="_blank" rel="noopener noreferrer">
                                                             {competitor.collection && <WalletCards />}
-                                                        </a>
+                                                        </Link>
                                                     </td>
                                                     <td className="border-r border-zinc-500 items-center justify-center"><div className="w-full h-full flex items-center justify-center">{competitor.isAdmin ? <Check /> : <X />}</div></td>
                                                     <td className="border-r border-zinc-500 items-center justify-center "><div className="w-full h-full flex items-center justify-center">{competitor.competitor_status === 'APPR' ? <Check /> : <X />}</div></td>

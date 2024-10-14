@@ -11,7 +11,7 @@ import logo from '/logo.png'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { cardRarityAtom, cardsAtom, cardSetAtom, currentCardsAtom, extraDeckCardsAtom, mainDeckCardsAtom, searchAtom } from "../helpers/atoms";
 import FilterDropDown from "./ui/dropdownMenu";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 export default function Header(){
     
     const [collection, setCollection] = useState<card[]>([])
@@ -348,7 +348,7 @@ export default function Header(){
                 <Dialog.Description>
                 <div className='flex flex-col gap-4 mt-4'>
                     <ol type="1" className='list-decimal ml-6'>
-                        <li>Acesse o site <a href="https://ygoprodeck.com/" className='underline text-violet-500' target='_blank'>ygoprodeck</a> e vá até sua coleção</li>
+                        <li>Acesse o site <Link to="https://ygoprodeck.com/" className='underline text-violet-500' target='_blank'>ygoprodeck</Link> e vá até sua coleção</li>
                         <li>Clique em <strong>Tools</strong> e baixe como <strong>.csv</strong></li>
                         <li>Ao baixar o arquivo selecione ele nesse site</li>
                         <li>Ao importar o arquivo você verá uma lista com todas suas cartas</li>
