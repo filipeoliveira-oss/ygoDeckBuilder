@@ -7,12 +7,14 @@ import { User } from "@supabase/supabase-js";
 import CreateNewTournament from "./ui/createNewTournament";
 import JoinTournament from "./ui/joinTournament";
 
-export default function NoTournament({ setTournaments, setLoading, userSession, searchParamsCode }: { setTournaments: Function, setLoading: Function, userSession: User, searchParamsCode:string | null }) {
+export default function NoTournament({ setTournaments, setLoading, userSession, searchParamsCode,setTournamentId }: { setTournaments: Function, setLoading: Function, userSession: User, searchParamsCode:string | null, setTournamentId:Function}) {
 
     const [code, setCode] = useState('')
     const [creating, setCreation] = useState(false)
     const [tournamentName, setTournamentName] = useState('')
     const [publicTournament, setPublicTournament] = useState(false)
+    const [seasonName, setSeasonName] = useState('')
+    
 
     async function handleEnter(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -42,7 +44,8 @@ export default function NoTournament({ setTournaments, setLoading, userSession, 
 
         if (data[0].is_public === false) {
 
-            const { data, error } = await supabase.from('competitors').select().eq("tournament_id", code).neq("competitor_status", "APPR")
+            const { data, error } = await supabase.from('competitors').select().eq("tournament_id", code).eq("competitor_status", "WAPPR")
+
             if (error) {
                 toast.error('Ocorreu um erro inesperado, tente novamente!')
                 return
@@ -114,10 +117,17 @@ export default function NoTournament({ setTournaments, setLoading, userSession, 
                 name: userSession.user_metadata.full_name,
                 tournament_id: TournamentData[0]?.tournament_id,
                 competitor_email: userSession.email,
-                isAdmin: true
+                isAdmin: true,
+                competitor_status:"APPR"
             })
 
-            if (CompetitorError) {
+            const {error: SeasonError} = await supabase.from('seasons').insert({
+                tournament_id: TournamentData[0]?.tournament_id,
+                season_name:seasonName || 'Temporada 1',
+                season_status:"CURRENT"
+            })
+
+            if (CompetitorError || SeasonError) {
                 toast.error('Ocorreu um erro durante a criação do torneio, tente novamente.')
                 return
             }
@@ -129,22 +139,30 @@ export default function NoTournament({ setTournaments, setLoading, userSession, 
         if (!TournamentsError) {
             setTournaments(Tournaments)
             toast.success('Torneio criado com sucesso!')
+            setTournamentId(TournamentData[0].tournament_id)
+            setTournamentName(TournamentData[0].tournament_name)
         }
+
+
+
+
         setLoading(false)
+
     }
 
     useEffect(() =>{
-        if(searchParamsCode){
+        if(searchParamsCode ){
             setCode(searchParamsCode)
         }
+
     },[])
     
     return (
         <div className="w-full h-full flex justify-center items-center">
-            <div className="h-[40%] w-[30%] flex flex-col justify-center items-center bg-zinc-700 gap-8">
+            <div className="min-h-[40%] h-fit w-[30%] flex flex-col justify-center items-center bg-zinc-700 gap-8">
                 {creating ?
                     <div className=" w-full h-full p-4 flex flex-col justify-center items-center gap-4">
-                        <CreateNewTournament changeNameFunction={setTournamentName} tournamentName={tournamentName} handlePublic={setPublicTournament} handleSubmit={handleCreation}/>
+                        <CreateNewTournament changeNameFunction={setTournamentName} tournamentName={tournamentName} handlePublic={setPublicTournament} handleSubmit={handleCreation} seasonName={seasonName} changeSeasonName={setSeasonName}/>
                         <Button className="w-40 h-8 text-lg bg-zinc-600" onClick={() => { setCreation(false) }}>Digitar código</Button>
                     </div>
                     :

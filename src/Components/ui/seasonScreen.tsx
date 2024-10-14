@@ -24,6 +24,8 @@ export default function SeasonScreen({ seasonResults }: { seasonResults: Array<r
     }
 
     return (
+        seasonResults.length === 0 ? <span className="flex text-center text-zinc-300 w-full h-[94dvh] items-center justify-center">Não existem dados de temporadas anteriores</span>
+        : 
         <div className="w-full h-fit max-h-[100%] flex flex-col mb-4">
             <div className="w-full h-fit p-4 flex overflow-hidden mt-4 ">
                 {seasonResults && <Podium first={seasonResults[0]} second={seasonResults[1]} third={seasonResults[2]} />}

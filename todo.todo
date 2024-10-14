@@ -28,12 +28,18 @@
 ✔ rever funcoes de admin @done(24-10-11 12:24)
 ✔ oned busca os duelistas, buscar somente os nao deleted @done(24-10-11 14:05)
 ✔ colocar coluna de ativo @done(24-10-11 14:05)
+✔ criar primeira season na criação do duelo @done(24-10-14 12:23)
+
 
 ----bugs---
 ✔ imagem nao alterando no edit @done(24-10-11 13:34)
 ✔ deletar competidor @done(24-10-10 21:22)
 ☐ Brackets estao renderizando a todo momento por algum motivo, ainda que os dados nao estejam alterando. ja tentei usar react.memo
 ✔ nao atualizando dps que salva duelo @done(24-10-11 12:23)
+✘ 0 nao parace no adicionar duelo @cancelled(24-10-14 15:10)
+✔ adicionar mensagem de nao existem dados para as temporadas @done(24-10-14 15:04)
+✔ mudar o nome da temporada para capitalized @done(24-10-14 14:56)
+✘ order by nos dropdown de competidors @cancelled(24-10-14 14:53)
 
 ----PENSAR E ANALISAR---
 ✔ o que acontece se eu deletar um competidor que tem batalha? talvez criar um ENUM de deleted @done(24-10-11 14:05)

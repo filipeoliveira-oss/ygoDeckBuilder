@@ -40,7 +40,7 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
     const [newTournamentPublic, setNewTournamentPublic] = useState<boolean>(false)
     const [joinTournamentModal, setJoinTournamentModal] = useState(false)
     const [joinTournamentCode, setJoinTournamentCode] = useState('')
-
+    const [seasonName, setSeasonName] = useState('')
 
     function handleChange(e: string) {
         setTournamentId(parseInt(e))
@@ -74,8 +74,14 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
                 competitor_email: userSession.email,
                 isAdmin: true
             })
+            
+            const {error: SeasonError} = await supabase.from('seasons').insert({
+                tournament_id: TournamentData[0]?.tournament_id,
+                season_name:seasonName || 'Temporada 1',
+                season_status:"CURRENT"
+            })
 
-            if (CompetitorError) {
+            if (CompetitorError || SeasonError) {
                 toast.error('Ocorreu um erro durante a criação do torneio, tente novamente.')
                 return
             }
@@ -91,7 +97,7 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
         setLoader(false)
     }
 
-    async function handleJointTournament(e: React.FormEvent<HTMLFormElement>) {
+    async function handleJoinTournament(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
 
         if (!joinTournamentCode) {
@@ -119,7 +125,8 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
 
         if (data[0].is_public === false) {
 
-            const { data, error } = await supabase.from('competitors').select().eq("tournament_id", joinTournamentCode).neq("competitor_status", "APPR")
+            const { data, error } = await supabase.from('competitors').select().eq("tournament_id", joinTournamentCode).eq("competitor_status", "WAPPR")
+
             if (error) {
                 toast.error('Ocorreu um erro inesperado, tente novamente!')
                 return
@@ -214,7 +221,7 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
                     <Dialog.Overlay className="DialogOverlay " />
                     <Dialog.Content className="DialogContent bg-zinc-700 text-white border-2 border-violet-500 w-96">
 
-                        <CreateNewTournament changeNameFunction={setNewTournamentName} handlePublic={setNewTournamentPublic} tournamentName={newTournamentName} handleSubmit={handleCreation} />
+                        <CreateNewTournament changeNameFunction={setNewTournamentName} handlePublic={setNewTournamentPublic} tournamentName={newTournamentName} handleSubmit={handleCreation} changeSeasonName={setSeasonName} seasonName={seasonName}/>
                         <Dialog.Close asChild>
                             <button className="IconButton" aria-label="Close" onClick={() => { setNewTournamentModal(false) }}>
                                 <X />
@@ -229,7 +236,7 @@ export default function TournamentDropdown({ setTournamentId, userTournaments, t
                     <Dialog.Overlay className="DialogOverlay " />
                     <Dialog.Content className="DialogContent bg-zinc-700 text-white border-2 border-violet-500 w-96">
                         <div className='flex gap-4 flex-col'>
-                            <JoinTournament changeCode={setJoinTournamentCode} code={joinTournamentCode} handleSubmit={handleJointTournament} />
+                            <JoinTournament changeCode={setJoinTournamentCode} code={joinTournamentCode} handleSubmit={handleJoinTournament} />
                         </div>
                         <Dialog.Close asChild>
                             <button className="IconButton" aria-label="Close" onClick={() => { setJoinTournamentModal(false) }}>

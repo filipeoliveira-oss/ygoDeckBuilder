@@ -28,7 +28,8 @@ interface tournamentHeader {
     setLoader: Function,
     setSeasons: Function,
     setTournaments: Function,
-    duelCode: string | null
+    duelCode: string | null,
+    setCurrentSeasonResults:Function
 }
 
 export default function TournamentHeader({
@@ -45,7 +46,7 @@ export default function TournamentHeader({
     setLoader,
     setSeasons,
     setTournaments,
-    duelCode }: tournamentHeader) {
+    duelCode,setCurrentSeasonResults }: tournamentHeader) {
 
     const navigate = useNavigate()
 
@@ -99,7 +100,7 @@ export default function TournamentHeader({
             isAdmin: newCompetitorAdmin,
             competitor_email: newCompetitorEmail,
             competitor_status: "WAPPR",
-            photo_url: newCompetitorPhotoUrl
+            photo_url: newCompetitorPhotoUrl || 'https://occ-0-8407-2219.1.nflxso.net/dnm/api/v6/E8vDc_W8CLv7-yMQu8KMEC7Rrr8/AAAABUX2KYwwhnfPwUIGOPB6DKz-f2tiWG2I1yE0swf9FQihfCjOYZg0eKiWdtExO4N0kjwkAWuTFhu1eLD2eesOqjtxsI0BaBdkFCRp.jpg?r=219' 
 
         }).select()
 
@@ -118,7 +119,7 @@ export default function TournamentHeader({
             competitor_status: data[0].competitor_status,
             competitor_id: data[0].competitor_id,
             joinned_at: data[0].joinned_at,
-            photo_url: newCompetitorPhotoUrl
+            photo_url: newCompetitorPhotoUrl || 'https://occ-0-8407-2219.1.nflxso.net/dnm/api/v6/E8vDc_W8CLv7-yMQu8KMEC7Rrr8/AAAABUX2KYwwhnfPwUIGOPB6DKz-f2tiWG2I1yE0swf9FQihfCjOYZg0eKiWdtExO4N0kjwkAWuTFhu1eLD2eesOqjtxsI0BaBdkFCRp.jpg?r=219'
         }])
 
         setNewCompetitorAdmin(false)
@@ -262,7 +263,7 @@ export default function TournamentHeader({
             return
         }
 
-        const { data, error: fetchError } = await supabase.from('seasons').select().eq('tournament_id', tournamentId)
+        const { data, error: fetchError } = await supabase.from('seasons').select().eq('tournament_id', tournamentId).order("created_at", {ascending:false})
 
         if (fetchError) {
             toast.error('Ocorreu um erro na requisição das temporadas, por favor atualize a página')
@@ -272,6 +273,7 @@ export default function TournamentHeader({
 
         if (data) {
             setSeasons(data)
+            setCurrentSeasonResults([])
             setLoader(false)
             toast.success('Temporada nova criada. Bons jogos!')
             setModalController({ ...modalController, newSeasonModal: false, tournamentModal: false })
@@ -302,7 +304,7 @@ export default function TournamentHeader({
 
         if (modalController.editCompetitorModal) {
 
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .storage
                 .from('competitorsPhoto')
                 .remove([fileName])
@@ -363,7 +365,7 @@ export default function TournamentHeader({
 
     return (
         <div className="flex flex-row justify-center items-center px-4">
-            <span className="absolute left-4 font-semibold capitalize cursor-pointer" onClick={() => handleTournamentCopy()}>{tournamentName} - {tournamentId}</span>
+            <span className="absolute left-4 font-semibold capitalize cursor-pointer" onClick={() => handleTournamentCopy()}>{tournamentName && tournamentId ? <span>{tournamentName} - {tournamentId}</span> : ''}</span>
             <div className="flex items-center justify-center px-2 h-12 gap-4">
                 <Action onClick={() => { navigate('/') }}>Deck builder</Action>
                 <Action onClick={() => { setModalController({ ...modalController, competitorsModal: true }) }}>Competidores</Action>
@@ -396,7 +398,7 @@ export default function TournamentHeader({
                                             <td className="border-r border-zinc-500">Foto</td>
                                             <td className="border-r border-zinc-500">Nome</td>
                                             <td className="border-r border-zinc-500">Email</td>
-                                            <td className="border-r border-zinc-500">Deck</td>
+                                            <td className="border-r border-zinc-500">Collection</td>
                                             <td className="border-r border-zinc-500">Admin?</td>
                                             <td className="border-r border-zinc-500">Aceito?</td>
                                             <td className="border-r border-zinc-500">Ativo?</td>
@@ -674,7 +676,7 @@ export default function TournamentHeader({
 
 
                         <Dialog.Close asChild>
-                            <button className="IconButton" aria-label="Close" onClick={() => { setModalController({ ...modalController, tournamentModal: false }) }}>
+                            <button className="IconButton" aria-label="Close" onClick={() => { setModalController({ ...modalController, newSeasonModal: false }) }}>
                                 <X />
                             </button>
                         </Dialog.Close>

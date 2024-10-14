@@ -10,10 +10,21 @@ import { Tables } from '../../helpers/supabase';
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa, } from '@supabase/auth-ui-shared'
 import { supabase } from '../../helpers/utils';
-import { Session } from '@supabase/supabase-js';
+import { Session, User } from '@supabase/supabase-js';
 import { useSetRecoilState } from 'recoil';
 import { isAdminAtom } from '../../helpers/atoms';
 import { useSearchParams } from 'react-router-dom';
+
+
+
+interface results {
+    competitorId: number,
+    wins: number,
+    losses: number,
+    competitorName: string,
+    photoUrl:string,
+}
+
 
 export default function Tournament() {
 
@@ -31,17 +42,19 @@ export default function Tournament() {
     const [userTournaments,setUserTournaments] = useState<Array<any>>([])
     const [tournamentDetail, setTournamentDetail] = useState<Tables<'tournaments'>>()
     const [seasons, setSeasons] = useState<Tables<'seasons'>[]>([])
+    const [currentSeasonResults, setCurrentSeasonResults] = useState<Array<results>>([])
 
     //Competitors
     const [competitors, setCompetitors] = useState<Array<Tables<'competitors'>>>([])
     const [session, setSession] = useState<Session | null>(null)
     const setIsAdmin = useSetRecoilState(isAdminAtom)
 
-    async function getTournamentsByUser(){
+
+    async function getTournamentsByUser(user:User){
         setLoader(true)
         const {data, error} = await supabase.from('competitors')
         .select('joinned_at, tournaments(tournament_id, tournament_name, active, is_public)')
-        .eq('competitor_email',(session?.user?.email || ''))
+        .eq('competitor_email',(user?.email || ''))
         .eq('competitor_status', 'APPR')
 
         if(error){
@@ -98,30 +111,54 @@ export default function Tournament() {
         if(!session){
             supabase.auth.getSession().then(({ data: { session } }) => {
                 setSession(session)
+                if(session){
+                    getTournamentsByUser(session?.user).then((res) =>{
+                        setUserTournaments(res)
+        
+                        let last = res.sort((a:any, b:any) => a.joinned_at - b.joinned_at)
+        
+                        setTournamentId(last[0].tournaments?.tournament_id || 0)
+                        setTournamentName(last[0].tournaments?.tournament_name || '')
+                        
+                    })
+                }
             })
     
             const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
                 setSession(session)
-                
+
+                if(session){
+                    getTournamentsByUser(session?.user).then((res) =>{
+                        setUserTournaments(res)
+        
+                        let last = res.sort((a:any, b:any) => a.joinned_at - b.joinned_at)
+        
+                        setTournamentId(last[0].tournaments?.tournament_id || 0)
+                        setTournamentName(last[0].tournaments?.tournament_name || '')
+                        
+                    })
+                }
             })
 
             return () => subscription.unsubscribe()
         }
-    }, [])
+    }, [!session])
 
-    useEffect(() =>{
-        if(session && userTournaments.length == 0){
-            getTournamentsByUser().then((res) =>{
-                setUserTournaments(res)
+    // useEffect(() =>{
+    //     if(session && check == false){
+    //         getTournamentsByUser().then((res) =>{
+    //             setUserTournaments(res)
 
-                let last = res.sort((a:any, b:any) => a.joinned_at - b.joinned_at)
+    //             let last = res.sort((a:any, b:any) => a.joinned_at - b.joinned_at)
 
-                setTournamentId(last[0].tournaments?.tournament_id || 0)
-                setTournamentName(last[0].tournaments?.tournament_name || '')
+    //             setTournamentId(last[0].tournaments?.tournament_id || 0)
+    //             setTournamentName(last[0].tournaments?.tournament_name || '')
                 
-            })
-        }
-    },[session])
+    //         })
+    //     }
+
+    //     setCheck(true)
+    // },[session, tournaments])
 
     useEffect(() =>{
         if(tournamentId && competitors.length === 0){
@@ -189,6 +226,7 @@ export default function Tournament() {
                             setSeasons={setSeasons}
                             setTournaments={setTournaments}
                             duelCode={duelCode}
+                            setCurrentSeasonResults={setCurrentSeasonResults}
                         />
                         <TournamentLogged 
                             userSession={session.user} 
@@ -198,7 +236,9 @@ export default function Tournament() {
                             setTournaments={setTournaments} 
                             tournaments={tournaments} 
                             duelCode={duelCode}
-                            userTournaments={userTournaments}
+                            setTournamentId={setTournamentId}
+                            currentSeasonResults={currentSeasonResults}
+                            setCurrentSeasonResults={setCurrentSeasonResults}
                         />
                     </>
                     :

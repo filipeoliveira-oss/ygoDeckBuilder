@@ -88,7 +88,7 @@ function Brackets({ duel, competitors,setCurrentResults }: brackets) {
     
     return (
         <>
-            <div className="w-full h-[100%] flex flex-row gap-2 border-r border-zinc-500 p-0 m-0 cursor-pointer" onDoubleClickCapture={(e) => isAdmin ? handleDoubleClick(e) : ''}>
+            <div className="w-full h-fit flex flex-row gap-2 border-r border-zinc-500 p-0 m-0 cursor-pointer" onDoubleClickCapture={(e) => isAdmin ? handleDoubleClick(e) : ''}>
                 <div className="h-28 w-16 flex flex-col items-center justify-between">
                     <div className="flex items-center justify-center  w-12 h-12 rounded-full bg-zinc-500">
                         <Trophy />

@@ -158,14 +158,17 @@ export default function SeasonAccordion({ seasons, competitors }: { seasons: Arr
 
     return (
         <Accordion.Root className="AccordionRoot" type="single" collapsible onValueChange={(value) => handleClick(value)} value={openItem}>
-            {seasons.map((season: Tables<'seasons'>) => {
+            {seasons.length === 0 ? 
+            <span className="flex text-center text-zinc-300 w-full h-[94dvh] items-center justify-center">Não existem dados de temporadas anteriores</span>
+            :
+            seasons.map((season: Tables<'seasons'>) => {
                 const curr = seasonsFetched.filter((seasonFetched:seasonsFetched) =>{
                     return seasonFetched.seasonId == season.season_id
                 })
 
                 return (
                     <Accordion.Item className="AccordionItem" value={String(season.season_id)} key={season.season_id}>
-                        <AccordionTrigger loading={whoIsLoading === season.season_id}>{season.season_name} </AccordionTrigger>
+                        <AccordionTrigger loading={whoIsLoading === season.season_id} className="uppercase">{season.season_name} </AccordionTrigger>
                         <AccordionContent>
                             {curr[0]?.battles?.length > 0 ? <SeasonScreen seasonResults={curr[0].battles}/> : <span>Não existem dados disponíveis para essa temporada</span>} 
                         </AccordionContent>
