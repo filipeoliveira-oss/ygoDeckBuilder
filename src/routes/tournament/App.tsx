@@ -194,7 +194,7 @@ export default function Tournament() {
                         providers={['discord']}
                         redirectTo='/tournament'
                     />
-                    <Link className='text-zinc-400 text-center cursor-pointer pb-4' href='/'>Voltar para Yu-Gi-Oh Deck builder</Link>
+                    <Link className='text-zinc-400 text-center cursor-pointer pb-4' to='/'>Voltar para Yu-Gi-Oh Deck builder</Link>
                 </div>
             </div>
         )
